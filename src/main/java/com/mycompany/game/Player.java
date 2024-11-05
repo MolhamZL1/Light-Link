@@ -15,27 +15,27 @@ public class Player {
     State grid;
 
     void startGame() {
-        grid = initGridLevel7();
+        grid = initGridLevel4();
         asking();
 
     }
 
-    private State initGridLevel7() {
-        Light light1 = new Light(Directions.Left, 11, 5);
-        Target target1 = new Target(4, 2);
-        Wall wall1 = new Wall(5, 3);
-        Wall wall2 = new Wall(10, 4);
-
-        Wall[] walls = {wall1, wall2};
-        Mirror mirror1 = new Mirror(MirrorDirections.topLeft, 4, 5, true, false);
-        Mirror mirror2 = new Mirror(MirrorDirections.topRight, 7, 5, true, false);
-        Mirror mirror3 = new Mirror(MirrorDirections.topRight, 8, 2, true, false);
-        Mirror mirror4 = new Mirror(MirrorDirections.topLeft, 11, 2, true, false);
-
-        Mirror[] mirrors = {mirror1, mirror2, mirror3, mirror4};
-        State grid1 = new State(8, 15, light1, target1, walls, mirrors);
-        return grid1;
-    }
+//    private State initGridLevel7() {
+//        Light light1 = new Light(Directions.Left, 11, 5);
+//        Target target1 = new Target(4, 2);
+//        Wall wall1 = new Wall(5, 3);
+//        Wall wall2 = new Wall(10, 4);
+//
+//        Wall[] walls = {wall1, wall2};
+//        Mirror mirror1 = new Mirror(MirrorDirections.topLeft, 4, 5, true, false);
+//        Mirror mirror2 = new Mirror(MirrorDirections.topRight, 7, 5, true, false);
+//        Mirror mirror3 = new Mirror(MirrorDirections.topRight, 8, 2, true, false);
+//        Mirror mirror4 = new Mirror(MirrorDirections.topLeft, 11, 2, true, false);
+//
+//        Mirror[] mirrors = {mirror1, mirror2, mirror3, mirror4};
+//        State grid1 = new State(8, 15, light1, target1, walls, mirrors);
+//        return grid1;
+//    }
 
     private State initGridLevel4() {
         Light light1 = new Light(Directions.Bottom, 4, 1);
@@ -44,11 +44,11 @@ public class Player {
         Wall wall2 = new Wall(9, 1);
         Wall wall3 = new Wall(5, 4);
         Wall[] walls = {wall1, wall2, wall3};
-        Mirror mirror1 = new Mirror(MirrorDirections.topRight, 6, 1, false, true);
-        Mirror mirror2 = new Mirror(MirrorDirections.topRight, 6, 3, false, false);
-        Mirror mirror3 = new Mirror(MirrorDirections.topLeft, 4, 3, false, true);
-        Mirror mirror4 = new Mirror(MirrorDirections.topRight, 4, 5, false, true);
-        Mirror mirror5 = new Mirror(MirrorDirections.topRight, 10, 5, false, false);
+        RotatedMirror mirror1 = new RotatedMirror(MirrorDirections.topRight, 6, 1);
+        FixedMirror mirror2 = new FixedMirror(MirrorDirections.topRight, 6, 3);
+        RotatedMirror mirror3 = new RotatedMirror(MirrorDirections.topLeft, 4, 3);
+        RotatedMirror mirror4 = new RotatedMirror(MirrorDirections.topRight, 4, 5);
+        FixedMirror mirror5 = new FixedMirror(MirrorDirections.topRight, 10, 5);
         Mirror[] mirrors = {mirror1, mirror2, mirror3, mirror4, mirror5};
         State grid1 = new State(8, 15, light1, target1, walls, mirrors);
         return grid1;
@@ -139,9 +139,9 @@ public class Player {
         try {
             Scanner scanner = new Scanner(System.in);
             for (int i = 0; i < grid.mirrors.length; i++) {
-                if (grid.mirrors[i].isIsMovable()) {
-                    System.out.println("if you want to move the mirror at the colmun " + grid.mirrors[i].getColPosition() + " and at the row " + grid.mirrors[i].getRowPosition() + " enter (" + i + ")");
-                }
+//                if (grid.mirrors[i].isIsMovable()) {
+//                    System.out.println("if you want to move the mirror at the colmun " + grid.mirrors[i].getColPosition() + " and at the row " + grid.mirrors[i].getRowPosition() + " enter (" + i + ")");
+//                }
             }
             int selectedMirror = scanner.nextInt();
             System.out.println("if you want it turned to right press (1)");
@@ -178,7 +178,7 @@ public class Player {
             boolean thereIsTurnableMirrors = false;
             Scanner scanner = new Scanner(System.in);
             for (int i = 0; i < grid.mirrors.length; i++) {
-                if (grid.mirrors[i].isIsturnable()) {
+                if (grid.mirrors[i] instanceof RotatedMirror) {
                     System.out.println("if you want to turn the mirror at the colmun " + grid.mirrors[i].getColPosition() + " and at the row " + grid.mirrors[i].getRowPosition() + " enter (" + i + ")");
                     thereIsTurnableMirrors = true;
                 }
