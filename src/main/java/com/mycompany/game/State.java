@@ -4,15 +4,7 @@
  */
 package com.mycompany.game;
 
-import static com.mycompany.game.CellType.Empty;
-import static com.mycompany.game.CellType.Light;
-import static com.mycompany.game.CellType.MirrorType;
-import static com.mycompany.game.CellType.Target;
-import static com.mycompany.game.CellType.PathLight;
-import static com.mycompany.game.CellType.Target;
-import static com.mycompany.game.CellType.WallType;
-import static com.mycompany.game.MirrorDirections.horizintal;
-import static com.mycompany.game.MirrorDirections.vertical;
+
 import java.util.LinkedList;
 
 /**
