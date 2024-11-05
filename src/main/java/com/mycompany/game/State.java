@@ -586,14 +586,15 @@ public class State {
     }
 
     public boolean isIsWinning() {
- // or return isWinning;
-        Cell lastElement = pathlight.getLast();
-        if (lastElement.getRowPos() == target.getRowPosition() && lastElement.getColPos() == target.getColPosition()) {
-            isWinning=true;
-            return true;
-        }
-        else 
-           return false;
+ // or
+ return isWinning;
+//        Cell lastElement = pathlight.getLast();
+//        if (lastElement.getRowPosition()== target.getRowPosition() && lastElement.getColPosition()== target.getColPosition()) {
+//            isWinning=true;
+//            return true;
+//        }
+//        else 
+//           return false;
     }
 
     public Wall[] getWalls() {

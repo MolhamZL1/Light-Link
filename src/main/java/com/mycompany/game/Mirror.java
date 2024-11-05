@@ -14,7 +14,7 @@ import static com.mycompany.game.MirrorDirections.vertical;
  * @author USER
  */
 public class Mirror {
-     MirrorDirections direction;
+   private MirrorDirections direction;
     private int rowPosition;
     private int colPosition;
 
@@ -46,6 +46,7 @@ public class Mirror {
     }
 
     public void setDirection(MirrorDirections direction) {
+        if(this instanceof RotatedMirror)
         this.direction = direction;
     }
 

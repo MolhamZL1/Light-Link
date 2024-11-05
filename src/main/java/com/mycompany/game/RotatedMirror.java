@@ -14,6 +14,7 @@ public class RotatedMirror extends Mirror{
         super(direction, rowPosition, colPosition);
     }
     
+    
 //    @Override
 //     public void setDirection(MirrorDirections direction) {
 //        

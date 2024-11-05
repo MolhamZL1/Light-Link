@@ -19,9 +19,7 @@ public class FixedMirror extends Mirror{
         super(direction, rowPosition, colPosition);
     }
 
-    public MirrorDirections getDirection() {
-        return direction;
-    }
+  
     
    
     
