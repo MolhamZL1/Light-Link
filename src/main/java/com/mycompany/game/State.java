@@ -72,8 +72,8 @@ public class State {
         }
     }
 
-    State getNextState() {
-
+ public   State getNextState() {
+        
         return this;
     }
 

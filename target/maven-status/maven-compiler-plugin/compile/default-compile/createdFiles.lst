@@ -4,6 +4,7 @@ com\mycompany\game\Directions.class
 com\mycompany\game\Game.class
 com\mycompany\game\Mirror.class
 com\mycompany\game\FixedMirror.class
+com\mycompany\game\MovableMirror.class
 com\mycompany\game\Cell.class
 com\mycompany\game\CellType.class
 com\mycompany\game\Light.class
