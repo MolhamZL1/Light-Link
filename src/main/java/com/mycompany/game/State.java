@@ -4,8 +4,9 @@
  */
 package com.mycompany.game;
 
-
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  *
@@ -33,7 +34,6 @@ public class State {
         this.target = target;
         this.mirrors = mirrors;
         this.isWinning = false;
-
         initCells();
         printState();
 
@@ -72,9 +72,40 @@ public class State {
         }
     }
 
- public   State getNextState() {
-        
-        return this;
+    public HashSet<State> getNextState(State state) {
+        HashSet<State> states = new HashSet<State>();
+
+        for (int i = 0; i < state.mirrors.length; i++) {
+            if (state.mirrors[i] instanceof RotatedMirror) {
+                for (MirrorDirections dir : MirrorDirections.values()) {
+                    System.out.print(state.mirrors[i].getRowPosition());
+
+                    System.out.println(dir);
+                    state.mirrors[i].setDirection(dir);
+
+                    State nextState = state.turnlight();
+
+                    states.add(nextState);
+
+                }
+                getNextState(state);
+            }
+        }
+
+        return states;
+    }
+
+    boolean v(LinkedList<Cell> pathlight1, LinkedList<Cell> pathlight2) {
+        for (Cell path1 : pathlight1) {
+            for (Cell path2 : pathlight2) {
+                if (path1.getRowPosition() != path2.getRowPosition() || path1.getColPosition() == path2.getColPosition()) {
+                    System.out.println("hiii");
+                    return false;
+
+                }
+            }
+        }
+        return true;
     }
 
     public State turnlight() {
@@ -542,7 +573,7 @@ public class State {
         System.out.println("-------------------------------------------------------------------------");
         if (isIsWinning()) {
             System.out.println("Congratulations !!,You Win!!");
-           
+
         }
     }
 
@@ -586,8 +617,8 @@ public class State {
     }
 
     public boolean isIsWinning() {
- // or
- return isWinning;
+        // or
+        return isWinning;
 //        Cell lastElement = pathlight.getLast();
 //        if (lastElement.getRowPosition()== target.getRowPosition() && lastElement.getColPosition()== target.getColPosition()) {
 //            isWinning=true;

@@ -4,17 +4,10 @@ package com.mycompany.game;
  * Basic Mirror class with direction, row, and column position.
  */
 public class Mirror {
+
     private MirrorDirections direction;
     private int rowPosition;
     private int colPosition;
-
-    public void setRowPosition(int rowPosition) {
-        this.rowPosition = rowPosition;
-    }
-
-    public void setColPosition(int colPosition) {
-        this.colPosition = colPosition;
-    }
 
     public Mirror(MirrorDirections direction, int rowPosition, int colPosition) {
         this.direction = direction;
@@ -24,11 +17,23 @@ public class Mirror {
 
     public void print() {
         switch (direction) {
-            case horizintal -> System.out.print(" - ");
-            case vertical -> System.out.print(" | ");
-            case topLeft -> System.out.print(" \\ ");
-            case topRight -> System.out.print(" / ");
+            case horizintal ->
+                System.out.print(" - ");
+            case vertical ->
+                System.out.print(" | ");
+            case topLeft ->
+                System.out.print(" \\ ");
+            case topRight ->
+                System.out.print(" / ");
         }
+    }
+
+    public void setRowPosition(int rowPosition) {
+        this.rowPosition = rowPosition;
+    }
+
+    public void setColPosition(int colPosition) {
+        this.colPosition = colPosition;
     }
 
     public MirrorDirections getDirection() {

@@ -9,8 +9,9 @@ package com.mycompany.game;
  * @author USER
  */
 public class Wall {
-     private int rowPosition;
-  private int colPosition;
+
+    private final int rowPosition;
+    private final int colPosition;
 
     public Wall(int rowPosition, int colPosition) {
         this.rowPosition = rowPosition;
@@ -21,18 +22,11 @@ public class Wall {
         return rowPosition;
     }
 
-    public void setRowPosition(int rowPosition) {
-        this.rowPosition = rowPosition;
-    }
-
     public int getColPosition() {
         return colPosition;
     }
 
-    public void setColPosition(int colPosition) {
-        this.colPosition = colPosition;
-    }
-   static void print(){
-          System.out.print(" # ");
+    static void print() {
+        System.out.print(" # ");
     }
 }

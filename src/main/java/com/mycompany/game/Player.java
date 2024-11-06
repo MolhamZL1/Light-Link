@@ -10,42 +10,8 @@ public class Player {
     private State grid;
 
     public void startGame() {
-        grid = initGridLevel7();
+        grid = new Levels().initGridLevel1();
         asking();
-    }
-      private State initGridLevel4() {
-        Light light1 = new Light(Directions.Bottom, 4, 1);
-        Target target1 = new Target(10, 1);
-        Wall wall1 = new Wall(4, 2);
-        Wall wall2 = new Wall(9, 1);
-        Wall wall3 = new Wall(5, 4);
-        Wall[] walls = {wall1, wall2, wall3};
-        RotatedMirror mirror1 = new RotatedMirror(MirrorDirections.topRight, 6, 1);
-        FixedMirror mirror2 = new FixedMirror(MirrorDirections.topRight, 6, 3);
-        RotatedMirror mirror3 = new RotatedMirror(MirrorDirections.topLeft, 4, 3);
-        RotatedMirror mirror4 = new RotatedMirror(MirrorDirections.topRight, 4, 5);
-        FixedMirror mirror5 = new FixedMirror(MirrorDirections.topRight, 10, 5);
-        Mirror[] mirrors = {mirror1, mirror2, mirror3, mirror4, mirror5};
-        State grid1 = new State(8, 15, light1, target1, walls, mirrors);
-        return grid1;
-    }
-
-   
-
-    private State initGridLevel7() {
-        Light light1 = new Light(Directions.Right, 4, 2);
-        Target target1 = new Target(11, 5);
-        Wall wall1 = new Wall(5, 3);
-        Wall wall2 = new Wall(10, 4);
-
-        Wall[] walls = {wall1, wall2};
-        MovableMirror mirror1 = new MovableMirror(MirrorDirections.topLeft, 4, 5, MirrorDirections.horizintal, 2);
-        MovableMirror mirror2 = new MovableMirror(MirrorDirections.topRight, 7, 5, MirrorDirections.vertical, 1);
-        MovableMirror mirror3 = new MovableMirror(MirrorDirections.topRight, 8, 2, MirrorDirections.topRight, 1);
-        MovableMirror mirror4 = new MovableMirror(MirrorDirections.topLeft, 11, 2, MirrorDirections.topLeft, 1);
-
-        Mirror[] mirrors = {mirror1, mirror2, mirror3, mirror4};
-        return new State(8, 15, light1, target1, walls, mirrors);
     }
 
     private void asking() {
@@ -65,9 +31,12 @@ public class Player {
         try {
             int selectedOperation = scanner.nextInt();
             switch (selectedOperation) {
-                case 1 -> askingAboutTurningLight();
-                case 2 -> askingAboutTurningMirrors();
-                case 3 -> askingAboutMovingMirrors();
+                case 1 ->
+                    askingAboutTurningLight();
+                case 2 ->
+                    askingAboutTurningMirrors();
+                case 3 ->
+                    askingAboutMovingMirrors();
                 default -> {
                     System.out.println("Invalid number. Please try again.");
                     askingAboutOperation();
@@ -86,9 +55,9 @@ public class Player {
         for (int i = 0; i < grid.mirrors.length; i++) {
             if (grid.mirrors[i] instanceof MovableMirror movableMirror) {
                 hasMovableMirrors = true;
-                System.out.println("Mirror at column " + movableMirror.getColPosition() + " and row " + movableMirror.getRowPosition() + 
-                                   " can move in direction: " + movableMirror.getMovingDirection() +
-                                   " within " + movableMirror.getMovingCellsNum() + " cells. Enter (" + i + ") to move this mirror.");
+                System.out.println("Mirror at column " + movableMirror.getColPosition() + " and row " + movableMirror.getRowPosition()
+                        + " can move in direction: " + movableMirror.getMovingDirection()
+                        + " within " + movableMirror.getMovingCellsNum() + " cells. Enter (" + i + ") to move this mirror.");
             }
         }
 
@@ -118,7 +87,6 @@ public class Player {
 
             System.out.print("Enter the index of the position you want to move the mirror to: ");
             int selectedPositionIndex = scanner.nextInt();
-           if(selectedPositionIndex==0)selectedMovableMirror.dynamicMovingCellsPosition++;
 
             if (selectedPositionIndex < 0 || selectedPositionIndex >= possiblePositions.size()) {
                 System.out.println("Invalid position choice. Please try again.");
@@ -147,15 +115,24 @@ public class Player {
         try {
             int selectedDirNum = scanner.nextInt();
             Directions newDirection = switch (selectedDirNum) {
-                case 1 -> Directions.Right;
-                case 2 -> Directions.Left;
-                case 3 -> Directions.Top;
-                case 4 -> Directions.Bottom;
-                case 5 -> Directions.BottomLeft;
-                case 6 -> Directions.BottomRight;
-                case 7 -> Directions.TopLeft;
-                case 8 -> Directions.TopRight;
-                default -> null;
+                case 1 ->
+                    Directions.Right;
+                case 2 ->
+                    Directions.Left;
+                case 3 ->
+                    Directions.Top;
+                case 4 ->
+                    Directions.Bottom;
+                case 5 ->
+                    Directions.BottomLeft;
+                case 6 ->
+                    Directions.BottomRight;
+                case 7 ->
+                    Directions.TopLeft;
+                case 8 ->
+                    Directions.TopRight;
+                default ->
+                    null;
             };
 
             if (newDirection != null) {
@@ -174,12 +151,14 @@ public class Player {
     private void askingAboutTurningMirrors() {
         Scanner scanner = new Scanner(System.in);
         boolean hasRotatableMirrors = false;
+        LinkedList<Integer> m = new LinkedList<Integer>();
 
         for (int i = 0; i < grid.mirrors.length; i++) {
             if (grid.mirrors[i] instanceof RotatedMirror) {
                 hasRotatableMirrors = true;
-                System.out.println("Mirror at column " + grid.mirrors[i].getColPosition() + 
-                                   " and row " + grid.mirrors[i].getRowPosition() + " is rotatable. Enter (" + i + ") to rotate this mirror.");
+                System.out.println("Mirror at column " + grid.mirrors[i].getColPosition()
+                        + " and row " + grid.mirrors[i].getRowPosition() + " is rotatable. Enter (" + i + ") to rotate this mirror.");
+                m.add(i);
             }
         }
 
@@ -191,16 +170,24 @@ public class Player {
 
         try {
             int selectedMirror = scanner.nextInt();
+            if (!m.contains(selectedMirror)) {
+                throw new Exception();
+            }
             System.out.println("Select a new direction for the mirror:");
             System.out.println("1. Top Right\n2. Top Left\n3. Horizontal\n4. Vertical");
 
             int selectedDirNum = scanner.nextInt();
             MirrorDirections newDirection = switch (selectedDirNum) {
-                case 1 -> MirrorDirections.topRight;
-                case 2 -> MirrorDirections.topLeft;
-                case 3 -> MirrorDirections.horizintal;
-                case 4 -> MirrorDirections.vertical;
-                default -> null;
+                case 1 ->
+                    MirrorDirections.topRight;
+                case 2 ->
+                    MirrorDirections.topLeft;
+                case 3 ->
+                    MirrorDirections.horizintal;
+                case 4 ->
+                    MirrorDirections.vertical;
+                default ->
+                    null;
             };
 
             if (newDirection != null) {

@@ -9,8 +9,9 @@ package com.mycompany.game;
  * @author USER
  */
 public class Cell {
-     private  CellType cellType;
-       private int rowPosition;
+
+    private CellType cellType;
+    private int rowPosition;
     private int colPosition;
 
     public Cell(CellType cellType, int rowPosition, int colPosition) {
@@ -34,9 +35,6 @@ public class Cell {
     public void setColPosition(int colPosition) {
         this.colPosition = colPosition;
     }
-
-    
- 
 
     public CellType getCellType() {
         return cellType;

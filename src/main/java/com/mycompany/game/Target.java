@@ -9,32 +9,25 @@ package com.mycompany.game;
  * @author USER
  */
 public class Target {
-    private int rowPosition;
-  private int colPosition;
+
+    private final int rowPosition;
+    private final int colPosition;
+
+    public Target(int rowPosition, int colPosition) {
+        this.rowPosition = rowPosition;
+        this.colPosition = colPosition;
+    }
 
     public int getRowPosition() {
         return rowPosition;
-    }
-
-    public void setRowPosition(int rowPosition) {
-        this.rowPosition = rowPosition;
     }
 
     public int getColPosition() {
         return colPosition;
     }
 
-    public void setColPosition(int colPosition) {
-        this.colPosition = colPosition;
-    }
- public void print() {
+    public void print() {
         System.out.print(" * ");
     }
-    public Target(int rowPosition, int colPosition) {
-        this.rowPosition = rowPosition;
-        this.colPosition = colPosition;
-    }
-   
-    
-    
+
 }

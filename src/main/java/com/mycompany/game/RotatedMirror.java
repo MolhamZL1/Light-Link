@@ -8,16 +8,10 @@ package com.mycompany.game;
  *
  * @author USER
  */
-public class RotatedMirror extends Mirror{
+public class RotatedMirror extends Mirror {
 
     public RotatedMirror(MirrorDirections direction, int rowPosition, int colPosition) {
         super(direction, rowPosition, colPosition);
     }
-    
-    
-//    @Override
-//     public void setDirection(MirrorDirections direction) {
-//        
-//            super.direction = direction;
-//    }
+
 }
