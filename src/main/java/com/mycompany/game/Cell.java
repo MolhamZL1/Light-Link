@@ -10,37 +10,19 @@ package com.mycompany.game;
  */
 public class Cell {
 
-    private CellType cellType;
-    private int rowPosition;
-    private int colPosition;
+    private Poistion poistion;
 
-    public Cell(CellType cellType, int rowPosition, int colPosition) {
-        this.cellType = cellType;
-        this.rowPosition = rowPosition;
-        this.colPosition = colPosition;
+    public Cell(Poistion poistion) {
+        this.poistion = poistion;
+
     }
 
-    public int getRowPosition() {
-        return rowPosition;
+    public Poistion getPoistion() {
+        return poistion;
     }
 
-    public void setRowPosition(int rowPosition) {
-        this.rowPosition = rowPosition;
+    public void setPoistion(Poistion poistion) {
+        this.poistion = poistion;
     }
 
-    public int getColPosition() {
-        return colPosition;
-    }
-
-    public void setColPosition(int colPosition) {
-        this.colPosition = colPosition;
-    }
-
-    public CellType getCellType() {
-        return cellType;
-    }
-
-    public void setCellType(CellType cellType) {
-        this.cellType = cellType;
-    }
 }

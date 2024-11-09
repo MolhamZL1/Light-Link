@@ -10,8 +10,8 @@ package com.mycompany.game;
  */
 public class RotatedMirror extends Mirror {
 
-    public RotatedMirror(MirrorDirections direction, int rowPosition, int colPosition) {
-        super(direction, rowPosition, colPosition);
+    public RotatedMirror(Poistion poistion, MirrorDirections direction) {
+        super(poistion, direction);
     }
 
 }
