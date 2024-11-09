@@ -551,7 +551,7 @@ public class State {
 
                 switch (cells[i][j].getCellType()) {
                     case Empty ->
-                        System.out.print("   ");
+                        System.out.print(" . ");
                     case WallType ->
                         Wall.print();
                     case Target ->

@@ -10,7 +10,7 @@ public class Player {
     private State grid;
 
     public void startGame() {
-        grid = new Levels().initGridLevel1();
+        grid = new Levels().chooseRandomLevel();
         asking();
     }
 
