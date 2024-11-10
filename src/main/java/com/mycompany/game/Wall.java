@@ -8,25 +8,14 @@ package com.mycompany.game;
  *
  * @author USER
  */
-public class Wall {
+public class Wall extends Cell {
 
-    private final int rowPosition;
-    private final int colPosition;
-
-    public Wall(int rowPosition, int colPosition) {
-        this.rowPosition = rowPosition;
-        this.colPosition = colPosition;
+    public Wall(Poistion poistion) {
+        super(poistion);
     }
 
-    public int getRowPosition() {
-        return rowPosition;
-    }
-
-    public int getColPosition() {
-        return colPosition;
-    }
-
-    static void print() {
-        System.out.print(" # ");
-    }
+    @Override
+  public void print(){
+    System.out.print(" # ");
+  }
 }

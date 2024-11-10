@@ -10,8 +10,10 @@ package com.mycompany.game;
  */
 public class FixedMirror extends Mirror {
 
-    public FixedMirror(MirrorDirections direction, int rowPosition, int colPosition) {
-        super(direction, rowPosition, colPosition);
+    public FixedMirror(Poistion poistion, MirrorDirections direction) {
+        super(poistion, direction);
     }
+
+  
 
 }

@@ -10,18 +10,16 @@ import static com.mycompany.game.Directions.Bottom;
  *
  * @author USER
  */
-public class Light {
+public class Light extends Cell {
 
     private Directions direction;
-    private int rowPosition;
-    private int colPosition;
 
-    public Light(Directions direction, int rowPosition, int colPosition) {
+    public Light(Poistion poistion, Directions direction) {
+        super(poistion);
         this.direction = direction;
-        this.rowPosition = rowPosition;
-        this.colPosition = colPosition;
     }
 
+   
     public Directions getDirection() {
         return direction;
     }
@@ -30,22 +28,7 @@ public class Light {
         this.direction = direction;
     }
 
-    public int getRowPosition() {
-        return rowPosition;
-    }
-
-    public void setRowPosition(int rowPosition) {
-        this.rowPosition = rowPosition;
-    }
-
-    public int getColPosition() {
-        return colPosition;
-    }
-
-    public void setColPosition(int colPosition) {
-        this.colPosition = colPosition;
-    }
-
+    @Override
     public void print() {
         switch (direction) {
             case Left ->
@@ -62,11 +45,12 @@ public class Light {
                 System.out.print(" \\\\");
             case TopLeft ->
                 System.out.print(" \\\\");
-                 case TopRight ->
+            case TopRight ->
                 System.out.print(" //");
             default -> {
             }
         }
     }
+    static public void printPathLight() { System.out.print(" = ");}
 
 }

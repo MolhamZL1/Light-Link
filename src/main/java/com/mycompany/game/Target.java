@@ -8,24 +8,13 @@ package com.mycompany.game;
  *
  * @author USER
  */
-public class Target {
+public class Target extends Cell {
 
-    private final int rowPosition;
-    private final int colPosition;
-
-    public Target(int rowPosition, int colPosition) {
-        this.rowPosition = rowPosition;
-        this.colPosition = colPosition;
+    public Target(Poistion poistion) {
+        super(poistion);
     }
 
-    public int getRowPosition() {
-        return rowPosition;
-    }
-
-    public int getColPosition() {
-        return colPosition;
-    }
-
+    @Override
     public void print() {
         System.out.print(" * ");
     }

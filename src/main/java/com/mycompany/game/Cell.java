@@ -25,4 +25,10 @@ public class Cell {
         this.poistion = poistion;
     }
 
+    ;
+ public void print() {
+        System.out.print(" . ");
+    }
+;
+
 }

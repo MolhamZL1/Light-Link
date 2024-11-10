@@ -4,6 +4,8 @@
  */
 package com.mycompany.game;
 
+import static com.mycompany.game.MirrorDirections.horizintal;
+import static com.mycompany.game.MirrorDirections.vertical;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -25,7 +27,7 @@ public class State {
     private LinkedList<Cell> pathlight;
 
     public State(int colmuns, int rows, Light light, Target target, Wall[] walls, Mirror[] mirrors) {
-        pathlight = new LinkedList<Cell>();
+        pathlight = new LinkedList<>();
         this.colmuns = colmuns;
         this.rows = rows;
         this.cells = new Cell[rows][colmuns];
@@ -35,8 +37,21 @@ public class State {
         this.mirrors = mirrors;
         this.isWinning = false;
         initCells();
-        printState();
 
+    }
+    public State(State state){
+    this.copy(state);
+    }
+    public void copy(State state){
+    this.setCells(state.getCells());
+    this.setLight(state.getLight());
+    this.setMirrors(state.getMirrors());
+    this.setTarget(state.getTarget());
+    this.setWalls(state.getWalls());
+    this.isWinning=state.isWinning;
+    this.rows=state.rows;
+    this.colmuns=state.colmuns;
+    this.pathlight=state.pathlight;
     }
 
     private void initCells() {
@@ -45,24 +60,24 @@ public class State {
             for (var j = 0; j < colmuns; j++) {
 
                 if (i == 0 || i == rows - 1 || j == 0 || j == colmuns - 1) {
-                    this.cells[i][j] = new Cell(CellType.WallType, i, j);
-                } else if (i == light.getRowPosition() && j == light.getColPosition()) {
-                    this.cells[i][j] = new Cell(CellType.Light, i, j);
-                } else if (i == target.getRowPosition() && j == target.getColPosition()) {
-                    this.cells[i][j] = new Cell(CellType.Target, i, j);
+                    this.cells[i][j] = new Wall(new Poistion(i, j));
+                } else if (i == light.getPoistion().getRowPosition() && j == light.getPoistion().getColPosition()) {
+                    this.cells[i][j] = new Light(new Poistion(i, j), light.getDirection());
+                } else if (i == target.getPoistion().getRowPosition() && j == target.getPoistion().getColPosition()) {
+                    this.cells[i][j] = new Target(new Poistion(i, j));
                 } else {
-                    this.cells[i][j] = new Cell(CellType.Empty, i, j);
+                    this.cells[i][j] = new Cell(new Poistion(i, j));
                 }
                 for (Wall wall : walls) {
-                    if (wall.getColPosition() == j && wall.getRowPosition() == i) {
-                        this.cells[i][j] = new Cell(CellType.WallType, i, j);
+                    if (wall.getPoistion().getRowPosition() == i && wall.getPoistion().getColPosition() == j) {
+                        this.cells[i][j] = new Wall(new Poistion(i, j));
                         break;
 
                     }
                 }
                 for (Mirror mirror : mirrors) {
-                    if (mirror.getColPosition() == j && mirror.getRowPosition() == i) {
-                        this.cells[i][j] = new Cell(CellType.MirrorType, i, j);
+                    if (mirror.getPoistion().getRowPosition() == i && mirror.getPoistion().getColPosition() == j) {
+                        this.cells[i][j] = new Mirror(new Poistion(i, j), mirror.getDirection());
                         break;
 
                     }
@@ -72,500 +87,403 @@ public class State {
         }
     }
 
-    public HashSet<State> getNextState(State state) {
-        HashSet<State> states = new HashSet<State>();
+//    public HashSet<State> getNextState(State state) {
+//        HashSet<State> states = new HashSet<State>();
+//
+//        for (int i = 0; i < state.mirrors.length; i++) {
+//            if (state.mirrors[i] instanceof RotatedMirror) {
+//                for (MirrorDirections dir : MirrorDirections.values()) {
+//                    System.out.print(state.mirrors[i].getRowPosition());
+//
+//                    System.out.println(dir);
+//                    state.mirrors[i].setDirection(dir);
+//
+//                    State nextState = state.turnlightOn();
+//
+//                    states.add(nextState);
+//
+//                }
+//                getNextState(state);
+//            }
+//        }
+//
+//        return states;
+//    }
 
-        for (int i = 0; i < state.mirrors.length; i++) {
-            if (state.mirrors[i] instanceof RotatedMirror) {
-                for (MirrorDirections dir : MirrorDirections.values()) {
-                    System.out.print(state.mirrors[i].getRowPosition());
+   
 
-                    System.out.println(dir);
-                    state.mirrors[i].setDirection(dir);
-
-                    State nextState = state.turnlight();
-
-                    states.add(nextState);
-
-                }
-                getNextState(state);
-            }
-        }
-
-        return states;
-    }
-
-    boolean v(LinkedList<Cell> pathlight1, LinkedList<Cell> pathlight2) {
-        for (Cell path1 : pathlight1) {
-            for (Cell path2 : pathlight2) {
-                if (path1.getRowPosition() != path2.getRowPosition() || path1.getColPosition() == path2.getColPosition()) {
-                    System.out.println("hiii");
-                    return false;
-
-                }
-            }
-        }
-        return true;
-    }
-
-    public State turnlight() {
+    public State updateState() {
         initCells();
-        settingPathLight(light.getDirection(), light.getRowPosition(), light.getColPosition());
+        settingPathLight(light.getDirection(), light.getPoistion());
         printState();
         return this;
     }
 
-    private void settingPathLight(Directions dir, int startingLightrow, int startingLightCol) {
-        switch (dir) {
+    private void settingPathLight(Directions lightDirction, Poistion poistion) {
+        switch (lightDirction) {
             case Right ->
-                printLightInRightDir(startingLightrow, startingLightCol);
+                printLightInRightDir(poistion);
             case Top ->
-                printLightInTopDir(startingLightrow, startingLightCol);
+                printLightInTopDir(poistion);
             case Bottom ->
-                printLightInBottomDir(startingLightrow, startingLightCol);
+                printLightInBottomDir(poistion);
             case Left ->
-                printLightInLeftDir(startingLightrow, startingLightCol);
+                printLightInLeftDir(poistion);
             case BottomLeft ->
-                printLightInBottomLeftDir(startingLightrow, startingLightCol);
+                printLightInBottomLeftDir(poistion);
             case BottomRight ->
-                printLightInBottomRightDir(startingLightrow, startingLightCol);
+                printLightInBottomRightDir(poistion);
             case TopLeft ->
-                printLightInTopLeftDir(startingLightrow, startingLightCol);
+                printLightInTopLeftDir(poistion);
             case TopRight ->
-                printLightInTOPRightDir(startingLightrow, startingLightCol);
+                printLightInTOPRightDir(poistion);
             default -> {
             }
         }
 
     }
 
-    private void printLightInTOPRightDir(int startingLightrow, int startingLightCol) {
+    private void printLightInTOPRightDir(Poistion poistion) {
         int i = 1;
-
-        CellType cellType;
-        int rowpos = startingLightrow;
-        int colpos = startingLightCol;
-        OUTER:
-        while (true) {
-            colpos = startingLightCol + i;
-            rowpos = startingLightrow - i;
-            cellType = cells[rowpos][colpos].getCellType();
-
-            switch (cellType) {
-                case Empty, PathLight -> {
-                    cells[rowpos][colpos].setCellType(CellType.PathLight);
-                    pathlight.add(cells[rowpos][colpos]);
-                    i++;
-                }
-                case WallType -> {
-                    break OUTER;
-                }
-                case Target -> {
-                    isWinning = true;
-                    break OUTER;
-                }
-                case MirrorType -> {
-                    MirrorDirections mirrorDir
-                            = knowsMirrorDir(colpos, rowpos);
-                    switch (mirrorDir) {
-                        case horizintal -> {
-                            settingPathLight(Directions.BottomRight, rowpos, colpos);
-                            break OUTER;
-                        }
-                        case vertical -> {
-                            settingPathLight(Directions.TopLeft, rowpos, colpos);
-                            break OUTER;
-                        }
-
-                        default -> {
-                            break OUTER;
-                        }
-                    }
-                }
-                default -> {
-                }
-            }
-
-        }
-    }
-
-    private void printLightInBottomLeftDir(int startingLightrow, int startingLightCol) {
-        int i = 1;
-
-        CellType cellType;
-        int rowpos = startingLightrow;
-        int colpos = startingLightCol;
-        OUTER:
-        while (true) {
-            colpos = startingLightCol - i;
-            rowpos = startingLightrow + i;
-            cellType = cells[rowpos][colpos].getCellType();
-
-            switch (cellType) {
-                case Empty, PathLight -> {
-                    cells[rowpos][colpos].setCellType(CellType.PathLight);
-                    pathlight.add(cells[rowpos][colpos]);
-                    i++;
-                }
-                case WallType -> {
-                    break OUTER;
-                }
-                case Target -> {
-                    isWinning = true;
-                    break OUTER;
-                }
-                case MirrorType -> {
-                    MirrorDirections mirrorDir
-                            = knowsMirrorDir(colpos, rowpos);
-                    switch (mirrorDir) {
-                        case horizintal -> {
-                            settingPathLight(Directions.TopLeft, rowpos, colpos);
-                            break OUTER;
-                        }
-                        case vertical -> {
-                            settingPathLight(Directions.BottomRight, rowpos, colpos);
-                            break OUTER;
-                        }
-
-                        default -> {
-                            break OUTER;
-                        }
-                    }
-                }
-                default -> {
-                }
-            }
-
-        }
-    }
-
-    private void printLightInTopLeftDir(int startingLightrow, int startingLightCol) {
-        int i = 1;
-
-        CellType cellType;
-        int rowpos = startingLightrow;
-        int colpos = startingLightCol;
-        OUTER:
-        while (true) {
-            colpos = startingLightCol - i;
-            rowpos = startingLightrow - i;
-            cellType = cells[rowpos][colpos].getCellType();
-
-            switch (cellType) {
-                case Empty, PathLight -> {
-                    cells[rowpos][colpos].setCellType(CellType.PathLight);
-                    pathlight.add(cells[rowpos][colpos]);
-                    i++;
-                }
-                case WallType -> {
-                    break OUTER;
-                }
-                case Target -> {
-                    isWinning = true;
-                    break OUTER;
-                }
-                case MirrorType -> {
-                    MirrorDirections mirrorDir
-                            = knowsMirrorDir(colpos, rowpos);
-                    switch (mirrorDir) {
-                        case horizintal -> {
-                            settingPathLight(Directions.BottomLeft, rowpos, colpos);
-                            break OUTER;
-                        }
-                        case vertical -> {
-                            settingPathLight(Directions.TopRight, rowpos, colpos);
-                            break OUTER;
-                        }
-
-                        default -> {
-                            break OUTER;
-                        }
-                    }
-                }
-                default -> {
-                }
-            }
-
-        }
-    }
-
-    private void printLightInBottomRightDir(int startingLightrow, int startingLightCol) {
-        int i = 1;
-
-        CellType cellType;
-        int rowpos = startingLightrow;
-        int colpos = startingLightCol;
-        OUTER:
-        while (true) {
-            colpos = startingLightCol + i;
-            rowpos = startingLightrow + i;
-            cellType = cells[rowpos][colpos].getCellType();
-
-            switch (cellType) {
-                case Empty, PathLight -> {
-                    cells[rowpos][colpos].setCellType(CellType.PathLight);
-                    pathlight.add(cells[rowpos][colpos]);
-                    i++;
-                }
-                case WallType -> {
-                    break OUTER;
-                }
-                case Target -> {
-                    isWinning = true;
-                    break OUTER;
-                }
-                case MirrorType -> {
-                    MirrorDirections mirrorDir
-                            = knowsMirrorDir(colpos, rowpos);
-                    switch (mirrorDir) {
-                        case horizintal -> {
-                            settingPathLight(Directions.TopRight, rowpos, colpos);
-                            break OUTER;
-                        }
-                        case vertical -> {
-                            settingPathLight(Directions.BottomLeft, rowpos, colpos);
-                            break OUTER;
-                        }
-
-                        default -> {
-                            break OUTER;
-                        }
-                    }
-                }
-                default -> {
-                }
-            }
-
-        }
-    }
-
-    private void printLightInRightDir(int startingLightrow, int startingLightCol) {
-        int i = 1;
-
-        CellType cellType;
-        int rowpos = startingLightrow;
+        int rowpos;
         int colpos;
         OUTER:
         while (true) {
-            colpos = startingLightCol + i;
-            cellType = cells[rowpos][colpos].getCellType();
+            colpos = poistion.getColPosition() + i;
+            rowpos = poistion.getRowPosition() - i;
+            if (cells[rowpos][colpos] instanceof Wall) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Target) {
+                isWinning = true;
+                break;
+            } else if (cells[rowpos][colpos] instanceof Light) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
 
-            switch (cellType) {
-                case Empty, PathLight -> {
-                    cells[rowpos][colpos].setCellType(CellType.PathLight);
-                    pathlight.add(cells[rowpos][colpos]);
-                    i++;
-                }
-                case WallType -> {
-                    break OUTER;
-                }
-                case Target -> {
-                    isWinning = true;
-                    break OUTER;
-                }
-                case MirrorType -> {
-                    MirrorDirections mirrorDir
-                            = knowsMirrorDir(colpos, rowpos);
-                    switch (mirrorDir) {
-                        case topRight -> {
-                            settingPathLight(Directions.Top, rowpos, colpos);
-                            break OUTER;
-                        }
-                        case topLeft -> {
-                            settingPathLight(Directions.Bottom, rowpos, colpos);
-                            break OUTER;
-                        }
-                        default -> {
-                            break OUTER;
-                        }
+                switch (mirror.getDirection()) {
+
+                    case horizintal -> {
+                        settingPathLight(Directions.BottomRight, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
+                    case vertical -> {
+                        settingPathLight(Directions.TopLeft, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
+
+                    default -> {
+                        break OUTER;
                     }
                 }
-                default -> {
-                }
+            } else {
+                pathlight.add(cells[rowpos][colpos]);
+                i++;
             }
 
         }
     }
 
-    private void printLightInLeftDir(int startingLightrow, int startingLightCol) {
+    private void printLightInBottomLeftDir(Poistion poistion) {
         int i = 1;
-
-        CellType cellType;
-        int rowpos = startingLightrow;
+        int rowpos;
         int colpos;
         OUTER:
         while (true) {
-            colpos = startingLightCol - i;
-            cellType = cells[rowpos][colpos].getCellType();
+            colpos = poistion.getColPosition() - i;
+            rowpos = poistion.getRowPosition() + i;
+            if (cells[rowpos][colpos] instanceof Wall) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Target) {
+                isWinning = true;
+                break;
+            } else if (cells[rowpos][colpos] instanceof Light) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
+                switch (mirror.getDirection()) {
+                    case horizintal -> {
+                        settingPathLight(Directions.BottomRight, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
+                    case vertical -> {
+                        settingPathLight(Directions.TopLeft, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
 
-            switch (cellType) {
-                case Empty, PathLight -> {
-                    cells[rowpos][colpos].setCellType(CellType.PathLight);
-                    pathlight.add(cells[rowpos][colpos]);
-                    i++;
-                }
-                case WallType -> {
-                    break OUTER;
-                }
-                case Target -> {
-                    isWinning = true;
-                    break OUTER;
-                }
-                case MirrorType -> {
-                    MirrorDirections mirrorDir
-                            = knowsMirrorDir(colpos, rowpos);
-                    switch (mirrorDir) {
-                        case topRight -> {
-                            settingPathLight(Directions.Bottom, rowpos, colpos);
-                            break OUTER;
-                        }
-                        case topLeft -> {
-                            settingPathLight(Directions.Top, rowpos, colpos);
-                            break OUTER;
-                        }
-                        default -> {
-                            break OUTER;
-                        }
+                    default -> {
+                        break OUTER;
                     }
                 }
-                default -> {
-                }
+
+            } else {
+                pathlight.add(cells[rowpos][colpos]);
+                i++;
             }
 
         }
+
     }
 
-    private void printLightInTopDir(int startingLightrow, int startingLightCol) {
+    private void printLightInTopLeftDir(Poistion poistion) {
         int i = 1;
-
-        CellType cellType;
-        int colpos = startingLightCol;
         int rowpos;
+        int colpos;
         OUTER:
         while (true) {
-            rowpos = startingLightrow - i;
-            cellType = cells[rowpos][colpos].getCellType();
-
-            switch (cellType) {
-                case Empty, PathLight -> {
-                    cells[rowpos][colpos].setCellType(CellType.PathLight);
-                    pathlight.add(cells[rowpos][colpos]);
-                    i++;
-                }
-                case WallType -> {
-                    break OUTER;
-                }
-                case Target -> {
-                    isWinning = true;
-                    break OUTER;
-                }
-                case MirrorType -> {
-                    MirrorDirections mirrorDir
-                            = knowsMirrorDir(colpos, rowpos);
-                    switch (mirrorDir) {
-                        case topRight -> {
-                            settingPathLight(Directions.Right, rowpos, colpos);
-                            break OUTER;
-                        }
-                        case topLeft -> {
-                            settingPathLight(Directions.Left, rowpos, colpos);
-                            break OUTER;
-                        }
-                        default -> {
-                            break OUTER;
-                        }
+            colpos = poistion.getColPosition() - i;
+            rowpos = poistion.getRowPosition() - i;
+            if (cells[rowpos][colpos] instanceof Wall) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Target) {
+                isWinning = true;
+                break;
+            } else if (cells[rowpos][colpos] instanceof Light) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
+                switch (mirror.getDirection()) {
+                    case horizintal -> {
+                        settingPathLight(Directions.BottomLeft, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
+                    case vertical -> {
+                        settingPathLight(Directions.TopRight, new Poistion(rowpos, colpos));
+                        break OUTER;
                     }
 
+                    default -> {
+                        break OUTER;
+                    }
                 }
-                default -> {
 
-                }
+            } else {
+                pathlight.add(cells[rowpos][colpos]);
+                i++;
             }
 
         }
+
     }
 
-    private void printLightInBottomDir(int startingLightrow, int startingLightCol) {
+    private void printLightInBottomRightDir(Poistion poistion) {
         int i = 1;
-
-        CellType cellType;
-        int colpos = startingLightCol;
         int rowpos;
+        int colpos;
         OUTER:
         while (true) {
-            rowpos = startingLightrow + i;
-            cellType = cells[rowpos][colpos].getCellType();
+            colpos = poistion.getColPosition() + i;
+            rowpos = poistion.getRowPosition() + i;
+            if (cells[rowpos][colpos] instanceof Wall) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Target) {
+                isWinning = true;
+                break;
+            } else if (cells[rowpos][colpos] instanceof Light) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
+                switch (mirror.getDirection()) {
+                    case horizintal -> {
+                        settingPathLight(Directions.TopRight, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
+                    case vertical -> {
+                        settingPathLight(Directions.BottomLeft, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
 
-            switch (cellType) {
-                case Empty, PathLight -> {
-                    cells[rowpos][colpos].setCellType(CellType.PathLight);
-                    pathlight.add(cells[rowpos][colpos]);
-                    i++;
-                }
-                case WallType -> {
-                    break OUTER;
-                }
-                case Target -> {
-                    isWinning = true;
-                    break OUTER;
-                }
-                case MirrorType -> {
-                    MirrorDirections mirrorDir
-                            = knowsMirrorDir(colpos, rowpos);
-                    switch (mirrorDir) {
-                        case topRight -> {
-                            settingPathLight(Directions.Left, rowpos, colpos);
-                            break OUTER;
-                        }
-                        case topLeft -> {
-                            settingPathLight(Directions.Right, rowpos, colpos);
-                            break OUTER;
-                        }
-                        default -> {
-                            break OUTER;
-                        }
+                    default -> {
+                        break OUTER;
                     }
                 }
-                default -> {
-                }
+
+            } else {
+                pathlight.add(cells[rowpos][colpos]);
+                i++;
             }
 
         }
+
     }
 
-    private MirrorDirections knowsMirrorDir(int colpos, int rowpos) {
+    private void printLightInRightDir(Poistion poistion) {
+        int i = 1;
+        int rowpos = poistion.getRowPosition();
+        int colpos;
+        OUTER:
+        while (true) {
+            colpos = poistion.getColPosition() + i;
 
-        for (Mirror mirror : mirrors) {
-            if (mirror.getColPosition() == colpos && mirror.getRowPosition() == rowpos) {
-                return mirror.getDirection();
+            if (cells[rowpos][colpos] instanceof Wall) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Target) {
+                isWinning = true;
+                break;
+            } else if (cells[rowpos][colpos] instanceof Light) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
+                switch (mirror.getDirection()) {
+                    case horizintal -> {
+                        settingPathLight(Directions.Top, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
+                    case vertical -> {
+                        settingPathLight(Directions.Bottom, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
 
+                    default -> {
+                        break OUTER;
+                    }
+                }
+
+            } else {
+                pathlight.add(cells[rowpos][colpos]);
+                i++;
             }
+
         }
-        return MirrorDirections.horizintal;
+
+    }
+
+    private void printLightInLeftDir(Poistion poistion) {
+        int i = 1;
+        int rowpos = poistion.getRowPosition();
+        int colpos;
+        OUTER:
+        while (true) {
+            colpos = poistion.getColPosition() - i;
+
+            if (cells[rowpos][colpos] instanceof Wall) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Target) {
+                isWinning = true;
+                break;
+            } else if (cells[rowpos][colpos] instanceof Light) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
+                switch (mirror.getDirection()) {
+                    case horizintal -> {
+                        settingPathLight(Directions.Bottom, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
+                    case vertical -> {
+                        settingPathLight(Directions.Top, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
+
+                    default -> {
+                        break OUTER;
+                    }
+                }
+
+            } else {
+                pathlight.add(cells[rowpos][colpos]);
+                i++;
+            }
+
+        }
+
+    }
+
+    private void printLightInTopDir(Poistion poistion) {
+        int i = 1;
+        int rowpos;
+        int colpos = poistion.getColPosition();
+        OUTER:
+        while (true) {
+            rowpos = poistion.getRowPosition() - i;
+
+            if (cells[rowpos][colpos] instanceof Wall) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Target) {
+                isWinning = true;
+                break;
+            } else if (cells[rowpos][colpos] instanceof Light) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
+                switch (mirror.getDirection()) {
+                    case horizintal -> {
+                        settingPathLight(Directions.Right, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
+                    case vertical -> {
+                        settingPathLight(Directions.Left, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
+
+                    default -> {
+                        break OUTER;
+                    }
+                }
+
+            } else {
+                pathlight.add(cells[rowpos][colpos]);
+                i++;
+            }
+
+        }
+
+    }
+
+    private void printLightInBottomDir(Poistion poistion) {
+        int i = 1;
+        int rowpos;
+        int colpos = poistion.getColPosition();
+        OUTER:
+        while (true) {
+            rowpos = poistion.getRowPosition() + i;
+
+            if (cells[rowpos][colpos] instanceof Wall) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Target) {
+                isWinning = true;
+                break;
+            } else if (cells[rowpos][colpos] instanceof Light) {
+                break;
+            } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
+                switch (mirror.getDirection()) {
+                    case horizintal -> {
+                        settingPathLight(Directions.Left, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
+                    case vertical -> {
+                        settingPathLight(Directions.Right, new Poistion(rowpos, colpos));
+                        break OUTER;
+                    }
+
+                    default -> {
+                        break OUTER;
+                    }
+                }
+
+            } else {
+                pathlight.add(cells[rowpos][colpos]);
+                i++;
+            }
+
+        }
+
     }
 
     private void printState() {
         printColNum();
         for (var i = 0; i < rows; i++) {
             for (var j = 0; j < colmuns; j++) {
-
-                switch (cells[i][j].getCellType()) {
-                    case Empty ->
-                        System.out.print(" . ");
-                    case WallType ->
-                        Wall.print();
-                    case Target ->
-                        target.print();
-                    case Light ->
-                        light.print();
-                    case MirrorType ->
-                        printMirrorDir(i, j);
-                    case PathLight ->
-                        System.out.print(" = ");
-
-                    default -> {
+                if (cells[i][j] instanceof Wall wall) {
+                    wall.print();
+                } else if (cells[i][j] instanceof Target targetcasting) {
+                   targetcasting.print();
+                } else if (cells[i][j] instanceof Light lightcasting) {
+                    lightcasting.print();
+                } else if (cells[i][j] instanceof Mirror mirror) {
+                   mirror.print();
+                } else {
+                    if (pathlight.contains(cells[i][j])) {
+                        Light.printPathLight();
+                    } else {
+                        cells[i][j].print();
                     }
+
                 }
+
                 printRowsNum(j, i);
             }
             System.out.println();
@@ -574,14 +492,6 @@ public class State {
         if (isIsWinning()) {
             System.out.println("Congratulations !!,You Win!!");
 
-        }
-    }
-
-    void printMirrorDir(int row, int col) {
-        for (Mirror mirror : mirrors) {
-            if (mirror.getColPosition() == col && mirror.getRowPosition() == row) {
-                mirror.print();
-            }
         }
     }
 
