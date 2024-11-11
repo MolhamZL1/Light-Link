@@ -37,21 +37,27 @@ public class State {
         this.mirrors = mirrors;
         this.isWinning = false;
         initCells();
+        printState();
 
     }
-    public State(State state){
-    this.copy(state);
+
+    public State(State state) {
+        this.copy(state);
+        initCells();
+       // printState();
     }
-    public void copy(State state){
-    this.setCells(state.getCells());
-    this.setLight(state.getLight());
-    this.setMirrors(state.getMirrors());
-    this.setTarget(state.getTarget());
-    this.setWalls(state.getWalls());
-    this.isWinning=state.isWinning;
-    this.rows=state.rows;
-    this.colmuns=state.colmuns;
-    this.pathlight=state.pathlight;
+
+    public void copy(State state) {
+        this.setCells(state.getCells());
+        this.getLight().copy(state.getLight());
+        this.setMirrors(state.getMirrors());
+        this.setTarget(state.getTarget());
+        this.setWalls(state.getWalls());
+        this.isWinning = state.isWinning;
+        this.rows = state.rows;
+        this.colmuns = state.colmuns;
+        this.pathlight = state.pathlight;
+        initCells();
     }
 
     private void initCells() {
@@ -87,30 +93,39 @@ public class State {
         }
     }
 
-//    public HashSet<State> getNextState(State state) {
-//        HashSet<State> states = new HashSet<State>();
-//
-//        for (int i = 0; i < state.mirrors.length; i++) {
-//            if (state.mirrors[i] instanceof RotatedMirror) {
-//                for (MirrorDirections dir : MirrorDirections.values()) {
-//                    System.out.print(state.mirrors[i].getRowPosition());
-//
-//                    System.out.println(dir);
-//                    state.mirrors[i].setDirection(dir);
-//
-//                    State nextState = state.turnlightOn();
-//
-//                    states.add(nextState);
-//
-//                }
-//                getNextState(state);
-//            }
-//        }
-//
-//        return states;
-//    }
+    public LinkedList<Integer> getIndeciesOfrotatableMirrors() {
+        LinkedList<Integer> indesiesOfRotatableMirrors = new LinkedList<>();
+        for (int i = 0; i < this.mirrors.length; i++) {
+            if (this.mirrors[i] instanceof RotatedMirror) {
+                indesiesOfRotatableMirrors.add(i);
+            }
+        }
+        return indesiesOfRotatableMirrors;
+    }
 
-   
+     public LinkedList<State> getNextState( ) {
+        LinkedList<State> states = new LinkedList<>();
+
+        try {
+            State copiedState= new State(this);
+            for (int i = 0; i < Action.posibleLightActions.length; i++) {
+               
+                states.add(Action.turnLightAction(copiedState, Action.posibleLightActions[i]));
+             
+            }
+//            for (int i = 0; i < state.mirrors.length; i++) {
+//                if (state.mirrors[i] instanceof RotatedMirror) {
+//                    for (int j = 0; j < Action.posibleMirrorActions.length; j++) {
+//                        states.add(Action.turnMirrorAction(state, Action.posibleMirrorActions[j], i));
+//                    }
+//                }
+//            }
+        } catch (Exception e) {
+
+            System.out.println(e);
+        }
+        return states;
+    }
 
     public State updateState() {
         initCells();
@@ -470,11 +485,11 @@ public class State {
                 if (cells[i][j] instanceof Wall wall) {
                     wall.print();
                 } else if (cells[i][j] instanceof Target targetcasting) {
-                   targetcasting.print();
+                    targetcasting.print();
                 } else if (cells[i][j] instanceof Light lightcasting) {
                     lightcasting.print();
                 } else if (cells[i][j] instanceof Mirror mirror) {
-                   mirror.print();
+                    mirror.print();
                 } else {
                     if (pathlight.contains(cells[i][j])) {
                         Light.printPathLight();

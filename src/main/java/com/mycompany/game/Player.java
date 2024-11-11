@@ -1,6 +1,7 @@
 package com.mycompany.game;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Scanner;
@@ -11,7 +12,12 @@ public class Player {
 
     public void startGame() {
         state = new Levels().chooseRandomLevel();
-        asking();
+        //asking();
+     LinkedList<State> states  =state.getNextState();
+        System.out.println(states.size());
+        for (State state1 : states) {
+            state1.updateState();
+        }
     }
 
     private void asking() {
@@ -65,19 +71,16 @@ public class Player {
 
     private void askingAboutTurningMirrors() {
         Scanner scanner = new Scanner(System.in);
-        boolean hasRotatableMirrors = false;
         LinkedList<Integer> indesiesOfRotatableMirrors = new LinkedList<>();
-
         for (int i = 0; i < state.mirrors.length; i++) {
             if (state.mirrors[i] instanceof RotatedMirror) {
-                hasRotatableMirrors = true;
+
                 System.out.println("Mirror at column " + state.mirrors[i].getPoistion().getColPosition()
                         + " and row " + state.mirrors[i].getPoistion().getRowPosition() + " is rotatable. Enter (" + i + ") to rotate this mirror.");
                 indesiesOfRotatableMirrors.add(i);
             }
         }
-
-        if (!hasRotatableMirrors) {
+        if (indesiesOfRotatableMirrors.isEmpty()) {
             System.out.println("No rotatable mirrors available.");
             asking();
             return;
@@ -92,14 +95,14 @@ public class Player {
             System.out.println("1. Top Right\n2. Top Left\n3. Horizontal\n4. Vertical");
 
             int selectedDirNum = scanner.nextInt();
-             state.copy(Action.turnMirrorAction(state, selectedDirNum,selectedMirror));
+            state.copy(Action.turnMirrorAction(state, selectedDirNum, selectedMirror));
             asking();
         } catch (Exception e) {
             System.out.println("Invalid input. Please try again.");
             askingAboutTurningMirrors();
         }
     }
-    
+
     private void askingAboutMovingMirrors() {
 //        Scanner scanner = new Scanner(System.in);
 //        boolean hasMovableMirrors = false;

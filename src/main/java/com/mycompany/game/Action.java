@@ -9,6 +9,8 @@ package com.mycompany.game;
  * @author USER
  */
 public class Action {
+    static int[] posibleLightActions={1,2,3,4,5,6,7,8};
+    static int[] posibleMirrorActions={1,2,3,4};
 
     static public State turnLightAction(State state, int selectedDirNum) throws Exception {
         State newstate = new State(state);
@@ -34,6 +36,7 @@ public class Action {
         };
 
         if (newDirection != null) {
+            System.out.println(newDirection);
             newstate.light.setDirection(newDirection);
 
         } else {
@@ -65,4 +68,5 @@ public class Action {
         }
         return newstate;
     }
+
 }

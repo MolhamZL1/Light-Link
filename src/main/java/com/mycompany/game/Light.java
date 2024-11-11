@@ -19,7 +19,11 @@ public class Light extends Cell {
         this.direction = direction;
     }
 
-   
+    public void copy(Light light) {
+        this.setDirection(light.getDirection());
+        this.setPoistion(light.getPoistion());
+    }
+
     public Directions getDirection() {
         return direction;
     }
@@ -51,6 +55,9 @@ public class Light extends Cell {
             }
         }
     }
-    static public void printPathLight() { System.out.print(" = ");}
+
+    static public void printPathLight() {
+        System.out.print(" = ");
+    }
 
 }
