@@ -13,6 +13,13 @@ public class Wall extends Cell {
     public Wall(Poistion poistion) {
         super(poistion);
     }
+    public Wall(Wall other) {
+        super(other);
+    }
+    @Override
+    public Wall copy(){
+    return new Wall(this);
+    }
 
     @Override
   public void print(){

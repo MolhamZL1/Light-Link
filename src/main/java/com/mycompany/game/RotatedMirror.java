@@ -13,5 +13,13 @@ public class RotatedMirror extends Mirror {
     public RotatedMirror(Poistion poistion, MirrorDirections direction) {
         super(poistion, direction);
     }
+// Copy constructor for deep copying
+    public RotatedMirror(RotatedMirror other) {
+        super(other);
+    }
 
+    @Override
+    public RotatedMirror copy() {
+        return new RotatedMirror(this); // Calls the copy constructor for RotatedMirror
+    }
 }

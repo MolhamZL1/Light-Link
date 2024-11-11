@@ -36,7 +36,7 @@ public class Action {
         };
 
         if (newDirection != null) {
-            System.out.println(newDirection);
+           
             newstate.light.setDirection(newDirection);
 
         } else {
@@ -47,6 +47,7 @@ public class Action {
 
     static public State turnMirrorAction(State state, int selectedDirNum, int selectedMirror) throws Exception {
         State newstate = new State(state);
+        
         MirrorDirections newDirection = switch (selectedDirNum) {
             case 1 ->
                 MirrorDirections.topRight;
@@ -55,17 +56,19 @@ public class Action {
             case 3 ->
                 MirrorDirections.horizintal;
             case 4 ->
-                MirrorDirections.vertical;
+                MirrorDirections.vertical;           
+                
             default ->
                 null;
         };
 
         if (newDirection != null) {
-            state.mirrors[selectedMirror].setDirection(newDirection);
+            newstate.mirrors[selectedMirror].setDirection(newDirection);
 
         } else {
             throw new Exception();
         }
+      
         return newstate;
     }
 

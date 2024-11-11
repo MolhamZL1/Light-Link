@@ -13,6 +13,14 @@ public class Target extends Cell {
     public Target(Poistion poistion) {
         super(poistion);
     }
+    
+   public Target(Target other){
+   super(other);
+   }
+    @Override
+   public Target copy(){
+   return  new Target(this);
+   }
 
     @Override
     public void print() {

@@ -10,8 +10,8 @@ import static com.mycompany.game.Directions.Bottom;
  *
  * @author USER
  */
-public class Light extends Cell {
 
+public class Light extends Cell {
     private Directions direction;
 
     public Light(Poistion poistion, Directions direction) {
@@ -19,9 +19,15 @@ public class Light extends Cell {
         this.direction = direction;
     }
 
-    public void copy(Light light) {
-        this.setDirection(light.getDirection());
-        this.setPoistion(light.getPoistion());
+    // Copy constructor for deep copying
+    public Light(Light other) {
+        super(other); // Calls Cell's copy constructor
+        this.direction = other.direction; // Enum, so safe to copy directly
+    }
+
+    @Override
+    public Light copy() {
+        return new Light(this);
     }
 
     public Directions getDirection() {
@@ -35,29 +41,19 @@ public class Light extends Cell {
     @Override
     public void print() {
         switch (direction) {
-            case Left ->
-                System.out.print(" < ");
-            case Right ->
-                System.out.print(" > ");
-            case Top ->
-                System.out.print(" ^ ");
-            case Bottom ->
-                System.out.print(" v ");
-            case BottomLeft ->
-                System.out.print(" //");
-            case BottomRight ->
-                System.out.print(" \\\\");
-            case TopLeft ->
-                System.out.print(" \\\\");
-            case TopRight ->
-                System.out.print(" //");
-            default -> {
-            }
+            case Left -> System.out.print(" < ");
+            case Right -> System.out.print(" > ");
+            case Top -> System.out.print(" ^ ");
+            case Bottom -> System.out.print(" v ");
+            case BottomLeft -> System.out.print(" //");
+            case BottomRight -> System.out.print(" \\\\");
+            case TopLeft -> System.out.print(" \\\\");
+            case TopRight -> System.out.print(" //");
+            default -> {}
         }
     }
 
-    static public void printPathLight() {
+    public static void printPathLight() {
         System.out.print(" = ");
     }
-
 }

@@ -13,7 +13,7 @@ import java.util.Random;
 public class Levels {
 
     public State chooseRandomLevel() {
-        int[] levels = {1};
+        int[] levels = {1,4};
         int random = new Random().nextInt(levels.length);
 
         
@@ -21,9 +21,9 @@ public class Levels {
             case 1 -> {
                 return initGridLevel1();
             }
-//            case 4 -> {
-//                return initGridLevel4();
-//            }
+            case 4 -> {
+                return initGridLevel4();
+            }
 //            case 7 -> {
 //                return initGridLevel7();
 //            }
@@ -57,22 +57,22 @@ public class Levels {
         return grid1;
     }
 
-//    State initGridLevel4() {
-//        Light light1 = new Light(Directions.Bottom, 4, 1);
-//        Target target1 = new Target(10, 1);
-//        Wall wall1 = new Wall(4, 2);
-//        Wall wall2 = new Wall(9, 1);
-//        Wall wall3 = new Wall(5, 4);
-//        Wall[] walls = {wall1, wall2, wall3};
-//        RotatedMirror mirror1 = new RotatedMirror(MirrorDirections.topRight, 6, 1);
-//        FixedMirror mirror2 = new FixedMirror(MirrorDirections.topRight, 6, 3);
-//        RotatedMirror mirror3 = new RotatedMirror(MirrorDirections.topLeft, 4, 3);
-//        RotatedMirror mirror4 = new RotatedMirror(MirrorDirections.topRight, 4, 5);
-//        FixedMirror mirror5 = new FixedMirror(MirrorDirections.topRight, 10, 5);
-//        Mirror[] mirrors = {mirror1, mirror2, mirror3, mirror4, mirror5};
-//        State grid1 = new State(8, 15, light1, target1, walls, mirrors);
-//        return grid1;
-//    }
+    State initGridLevel4() {
+        Light light1 = new Light(new Poistion(4,1),Directions.Bottom);
+        Target target1 = new Target(new Poistion(10, 1));
+        Wall wall1 = new Wall(new Poistion(4,2));
+        Wall wall2 = new Wall(new Poistion(9, 1));
+        Wall wall3 = new Wall(new Poistion(5, 4));
+        Wall[] walls = {wall1, wall2, wall3};
+        RotatedMirror mirror1 = new RotatedMirror(new Poistion(6, 1),MirrorDirections.topRight);
+        FixedMirror mirror2 = new FixedMirror(new Poistion(6, 3),MirrorDirections.topRight);
+        RotatedMirror mirror3 = new RotatedMirror(new Poistion(4, 3),MirrorDirections.topLeft);
+        RotatedMirror mirror4 = new RotatedMirror(new Poistion(4, 5),MirrorDirections.topRight);
+        FixedMirror mirror5 = new FixedMirror(new Poistion(10, 5),MirrorDirections.topRight);
+        Mirror[] mirrors = {mirror1, mirror2, mirror3, mirror4, mirror5};
+        State grid1 = new State(8, 15, light1, target1, walls, mirrors);
+        return grid1;
+    }
 //
 //    State initGridLevel7() {
 //        Light light1 = new Light(Directions.Right, 4, 2);

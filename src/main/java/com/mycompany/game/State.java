@@ -36,28 +36,51 @@ public class State {
         this.target = target;
         this.mirrors = mirrors;
         this.isWinning = false;
-        initCells();
-        printState();
+        updateState();
+        //initCells();
+        // printState();
 
     }
 
-    public State(State state) {
-        this.copy(state);
-        initCells();
-       // printState();
+    // Deep copy constructor
+    public State(State other) {
+        this.colmuns = other.colmuns;
+        this.rows = other.rows;
+        this.light = other.light.copy(); // Assuming Light has a deepCopy method
+        this.target = other.target.copy(); // Assuming Target has a deepCopy method
+        this.cells = new Cell[other.rows][other.colmuns];
+
+        // Deep copy cells
+        for (int i = 0; i < other.rows; i++) {
+            for (int j = 0; j < other.colmuns; j++) {
+                this.cells[i][j] = other.cells[i][j].copy(); // Assuming Cell has a deepCopy method
+            }
+        }
+
+        // Deep copy walls
+        this.walls = new Wall[other.walls.length];
+        for (int i = 0; i < other.walls.length; i++) {
+            this.walls[i] = other.walls[i].copy(); // Assuming Wall has a deepCopy method
+        }
+
+        // Deep copy mirrors
+        this.mirrors = new Mirror[other.mirrors.length];
+        for (int i = 0; i < other.mirrors.length; i++) {
+            this.mirrors[i] = other.mirrors[i].copy(); // Will return the correct type
+        }
+
+        // Deep copy pathlight
+        this.pathlight = new LinkedList<>();
+        for (Cell cell : other.pathlight) {
+            this.pathlight.add(cell.copy()); // Assuming Cell has a deepCopy method
+        }
+
+        this.isWinning = other.isWinning;
+        updateState();
     }
 
-    public void copy(State state) {
-        this.setCells(state.getCells());
-        this.getLight().copy(state.getLight());
-        this.setMirrors(state.getMirrors());
-        this.setTarget(state.getTarget());
-        this.setWalls(state.getWalls());
-        this.isWinning = state.isWinning;
-        this.rows = state.rows;
-        this.colmuns = state.colmuns;
-        this.pathlight = state.pathlight;
-        initCells();
+    public State deepCopy() {
+        return new State(this);
     }
 
     private void initCells() {
@@ -103,23 +126,29 @@ public class State {
         return indesiesOfRotatableMirrors;
     }
 
-     public LinkedList<State> getNextState( ) {
+    public LinkedList<State> getNextState() {
         LinkedList<State> states = new LinkedList<>();
 
         try {
-            State copiedState= new State(this);
+            State copiedState = new State(this);
             for (int i = 0; i < Action.posibleLightActions.length; i++) {
-               
-                states.add(Action.turnLightAction(copiedState, Action.posibleLightActions[i]));
-             
+                State state1 = new State(Action.turnLightAction(copiedState, Action.posibleLightActions[i]));
+                states.add(state1);
+                
+                for (int mirror = 0; mirror < state1.mirrors.length; mirror++) {
+                    if (state1.mirrors[mirror] instanceof RotatedMirror) {
+                        
+                       
+                        for (int j = 0; j < Action.posibleMirrorActions.length; j++) {
+                            State state2=new State(Action.turnMirrorAction(state1, Action.posibleMirrorActions[j], mirror));
+                            states.add(state2);
+                        }
+
+                    }
+                }
+
             }
-//            for (int i = 0; i < state.mirrors.length; i++) {
-//                if (state.mirrors[i] instanceof RotatedMirror) {
-//                    for (int j = 0; j < Action.posibleMirrorActions.length; j++) {
-//                        states.add(Action.turnMirrorAction(state, Action.posibleMirrorActions[j], i));
-//                    }
-//                }
-//            }
+//          
         } catch (Exception e) {
 
             System.out.println(e);
@@ -130,7 +159,7 @@ public class State {
     public State updateState() {
         initCells();
         settingPathLight(light.getDirection(), light.getPoistion());
-        printState();
+        // printState();
         return this;
     }
 
@@ -478,7 +507,7 @@ public class State {
 
     }
 
-    private void printState() {
+    public void printState() {
         printColNum();
         for (var i = 0; i < rows; i++) {
             for (var j = 0; j < colmuns; j++) {
@@ -504,10 +533,7 @@ public class State {
             System.out.println();
         }
         System.out.println("-------------------------------------------------------------------------");
-        if (isIsWinning()) {
-            System.out.println("Congratulations !!,You Win!!");
 
-        }
     }
 
     private void printRowsNum(int j, int i) {

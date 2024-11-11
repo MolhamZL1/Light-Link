@@ -8,13 +8,23 @@ package com.mycompany.game;
  *
  * @author USER
  */
+
 public class Poistion {
-      private int rowPosition;
+    private int rowPosition;
     private int colPosition;
 
     public Poistion(int rowPosition, int colPosition) {
         this.rowPosition = rowPosition;
         this.colPosition = colPosition;
+    }
+
+    // Copy constructor for deep copying
+    public Poistion(Poistion other) {
+        this.rowPosition = other.rowPosition;
+        this.colPosition = other.colPosition;
+    }
+    public Poistion copy(){
+    return new Poistion(this);
     }
 
     public int getRowPosition() {
