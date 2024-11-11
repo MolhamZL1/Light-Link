@@ -364,11 +364,11 @@ public class State {
                 break;
             } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
                 switch (mirror.getDirection()) {
-                    case horizintal -> {
+                    case topRight -> {
                         settingPathLight(Directions.Top, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
-                    case vertical -> {
+                    case topLeft -> {
                         settingPathLight(Directions.Bottom, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
@@ -404,11 +404,11 @@ public class State {
                 break;
             } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
                 switch (mirror.getDirection()) {
-                    case horizintal -> {
+                    case topRight -> {
                         settingPathLight(Directions.Bottom, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
-                    case vertical -> {
+                    case topLeft -> {
                         settingPathLight(Directions.Top, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
@@ -444,11 +444,11 @@ public class State {
                 break;
             } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
                 switch (mirror.getDirection()) {
-                    case horizintal -> {
+                    case topRight -> {
                         settingPathLight(Directions.Right, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
-                    case vertical -> {
+                    case topLeft -> {
                         settingPathLight(Directions.Left, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
@@ -484,11 +484,11 @@ public class State {
                 break;
             } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
                 switch (mirror.getDirection()) {
-                    case horizintal -> {
+                    case topRight -> {
                         settingPathLight(Directions.Left, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
-                    case vertical -> {
+                    case topLeft -> {
                         settingPathLight(Directions.Right, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
