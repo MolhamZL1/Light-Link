@@ -15,7 +15,7 @@ import java.util.Set;
  * @author USER
  */
 public class State {
-
+    
     int colmuns;
     int rows;
     Light light;
@@ -25,7 +25,7 @@ public class State {
     Mirror[] mirrors;
     boolean isWinning;
     private LinkedList<Cell> pathlight;
-
+    
     public State(int colmuns, int rows, Light light, Target target, Wall[] walls, Mirror[] mirrors) {
         pathlight = new LinkedList<>();
         this.colmuns = colmuns;
@@ -74,20 +74,20 @@ public class State {
         for (Cell cell : other.pathlight) {
             this.pathlight.add(cell.copy()); // Assuming Cell has a deepCopy method
         }
-
+        
         this.isWinning = other.isWinning;
         updateState();
     }
-
+    
     public State deepCopy() {
         return new State(this);
     }
-
+    
     private void initCells() {
         pathlight.clear();
         for (var i = 0; i < rows; i++) {
             for (var j = 0; j < colmuns; j++) {
-
+                
                 if (i == 0 || i == rows - 1 || j == 0 || j == colmuns - 1) {
                     this.cells[i][j] = new Wall(new Poistion(i, j));
                 } else if (i == light.getPoistion().getRowPosition() && j == light.getPoistion().getColPosition()) {
@@ -101,21 +101,21 @@ public class State {
                     if (wall.getPoistion().getRowPosition() == i && wall.getPoistion().getColPosition() == j) {
                         this.cells[i][j] = new Wall(new Poistion(i, j));
                         break;
-
+                        
                     }
                 }
                 for (Mirror mirror : mirrors) {
                     if (mirror.getPoistion().getRowPosition() == i && mirror.getPoistion().getColPosition() == j) {
                         this.cells[i][j] = new Mirror(new Poistion(i, j), mirror.getDirection());
                         break;
-
+                        
                     }
                 }
-
+                
             }
         }
     }
-
+    
     public LinkedList<Integer> getIndeciesOfrotatableMirrors() {
         LinkedList<Integer> indesiesOfRotatableMirrors = new LinkedList<>();
         for (int i = 0; i < this.mirrors.length; i++) {
@@ -125,44 +125,63 @@ public class State {
         }
         return indesiesOfRotatableMirrors;
     }
-
+    
     public LinkedList<State> getNextState() {
         LinkedList<State> states = new LinkedList<>();
-
-        try {
-            State copiedState = new State(this);
-            for (int i = 0; i < Action.posibleLightActions.length; i++) {
-                State state1 = new State(Action.turnLightAction(copiedState, Action.posibleLightActions[i]));
-                states.add(state1);
-                
-                for (int mirror = 0; mirror < state1.mirrors.length; mirror++) {
-                    if (state1.mirrors[mirror] instanceof RotatedMirror) {
-                        
-                       
-                        for (int j = 0; j < Action.posibleMirrorActions.length; j++) {
-                            State state2=new State(Action.turnMirrorAction(state1, Action.posibleMirrorActions[j], mirror));
-                            states.add(state2);
-                        }
-
-                    }
-                }
-
-            }
-//          
-        } catch (Exception e) {
-
-            System.out.println(e);
-        }
+        generateStates(new State(this), 0, states);
         return states;
     }
+    
+    private void generateStates(State currentState, int mirrorIndex, LinkedList<State> states) {
+        try {
+            // Apply each possible action for the light to create new states
+            for (int lightAction : Action.posibleLightActions) {
+                State lightModifiedState = Action.turnLightAction(currentState, lightAction);
 
+                // After modifying the light, recursively handle mirrors
+                applyMirrorActions(lightModifiedState, mirrorIndex, states);
+            }
+        } catch (Exception e) {
+            System.err.println("Error in generating light actions: " + e.getMessage());
+        }
+    }
+    
+    private void applyMirrorActions(State state, int mirrorIndex, LinkedList<State> states) {
+        // If we've finished with all mirrors, add the final state to the list
+        if (mirrorIndex >= state.mirrors.length) {
+            if (states.contains(state)) {
+                states.add(state);
+            }
+            return;
+        }
+
+        // Check if the mirror at the current index is a RotatedMirror
+        if (!(state.mirrors[mirrorIndex] instanceof RotatedMirror)) {
+            // Skip this mirror and move to the next
+            applyMirrorActions(state, mirrorIndex + 1, states);
+            return;
+        }
+
+        // Apply each possible action to the current mirror
+        for (int mirrorAction : Action.posibleMirrorActions) {
+            try {
+                State mirrorModifiedState = Action.turnMirrorAction(state, mirrorAction, mirrorIndex);
+
+                // Recurse to handle the next mirror
+                applyMirrorActions(mirrorModifiedState, mirrorIndex + 1, states);
+            } catch (Exception e) {
+                System.err.println("Error in generating mirror actions: " + e.getMessage());
+            }
+        }
+    }
+    
     public State updateState() {
         initCells();
         settingPathLight(light.getDirection(), light.getPoistion());
         // printState();
         return this;
     }
-
+    
     private void settingPathLight(Directions lightDirction, Poistion poistion) {
         switch (lightDirction) {
             case Right ->
@@ -184,9 +203,9 @@ public class State {
             default -> {
             }
         }
-
+        
     }
-
+    
     private void printLightInTOPRightDir(Poistion poistion) {
         int i = 1;
         int rowpos;
@@ -203,9 +222,9 @@ public class State {
             } else if (cells[rowpos][colpos] instanceof Light) {
                 break;
             } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
-
+                
                 switch (mirror.getDirection()) {
-
+                    
                     case horizintal -> {
                         settingPathLight(Directions.BottomRight, new Poistion(rowpos, colpos));
                         break OUTER;
@@ -214,7 +233,7 @@ public class State {
                         settingPathLight(Directions.TopLeft, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
-
+                    
                     default -> {
                         break OUTER;
                     }
@@ -223,10 +242,10 @@ public class State {
                 pathlight.add(cells[rowpos][colpos]);
                 i++;
             }
-
+            
         }
     }
-
+    
     private void printLightInBottomLeftDir(Poistion poistion) {
         int i = 1;
         int rowpos;
@@ -252,21 +271,21 @@ public class State {
                         settingPathLight(Directions.TopLeft, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
-
+                    
                     default -> {
                         break OUTER;
                     }
                 }
-
+                
             } else {
                 pathlight.add(cells[rowpos][colpos]);
                 i++;
             }
-
+            
         }
-
+        
     }
-
+    
     private void printLightInTopLeftDir(Poistion poistion) {
         int i = 1;
         int rowpos;
@@ -292,21 +311,21 @@ public class State {
                         settingPathLight(Directions.TopRight, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
-
+                    
                     default -> {
                         break OUTER;
                     }
                 }
-
+                
             } else {
                 pathlight.add(cells[rowpos][colpos]);
                 i++;
             }
-
+            
         }
-
+        
     }
-
+    
     private void printLightInBottomRightDir(Poistion poistion) {
         int i = 1;
         int rowpos;
@@ -332,21 +351,21 @@ public class State {
                         settingPathLight(Directions.BottomLeft, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
-
+                    
                     default -> {
                         break OUTER;
                     }
                 }
-
+                
             } else {
                 pathlight.add(cells[rowpos][colpos]);
                 i++;
             }
-
+            
         }
-
+        
     }
-
+    
     private void printLightInRightDir(Poistion poistion) {
         int i = 1;
         int rowpos = poistion.getRowPosition();
@@ -354,7 +373,7 @@ public class State {
         OUTER:
         while (true) {
             colpos = poistion.getColPosition() + i;
-
+            
             if (cells[rowpos][colpos] instanceof Wall) {
                 break;
             } else if (cells[rowpos][colpos] instanceof Target) {
@@ -372,21 +391,21 @@ public class State {
                         settingPathLight(Directions.Bottom, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
-
+                    
                     default -> {
                         break OUTER;
                     }
                 }
-
+                
             } else {
                 pathlight.add(cells[rowpos][colpos]);
                 i++;
             }
-
+            
         }
-
+        
     }
-
+    
     private void printLightInLeftDir(Poistion poistion) {
         int i = 1;
         int rowpos = poistion.getRowPosition();
@@ -394,7 +413,7 @@ public class State {
         OUTER:
         while (true) {
             colpos = poistion.getColPosition() - i;
-
+            
             if (cells[rowpos][colpos] instanceof Wall) {
                 break;
             } else if (cells[rowpos][colpos] instanceof Target) {
@@ -412,21 +431,21 @@ public class State {
                         settingPathLight(Directions.Top, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
-
+                    
                     default -> {
                         break OUTER;
                     }
                 }
-
+                
             } else {
                 pathlight.add(cells[rowpos][colpos]);
                 i++;
             }
-
+            
         }
-
+        
     }
-
+    
     private void printLightInTopDir(Poistion poistion) {
         int i = 1;
         int rowpos;
@@ -434,7 +453,7 @@ public class State {
         OUTER:
         while (true) {
             rowpos = poistion.getRowPosition() - i;
-
+            
             if (cells[rowpos][colpos] instanceof Wall) {
                 break;
             } else if (cells[rowpos][colpos] instanceof Target) {
@@ -452,21 +471,21 @@ public class State {
                         settingPathLight(Directions.Left, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
-
+                    
                     default -> {
                         break OUTER;
                     }
                 }
-
+                
             } else {
                 pathlight.add(cells[rowpos][colpos]);
                 i++;
             }
-
+            
         }
-
+        
     }
-
+    
     private void printLightInBottomDir(Poistion poistion) {
         int i = 1;
         int rowpos;
@@ -474,7 +493,7 @@ public class State {
         OUTER:
         while (true) {
             rowpos = poistion.getRowPosition() + i;
-
+            
             if (cells[rowpos][colpos] instanceof Wall) {
                 break;
             } else if (cells[rowpos][colpos] instanceof Target) {
@@ -492,21 +511,21 @@ public class State {
                         settingPathLight(Directions.Right, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
-
+                    
                     default -> {
                         break OUTER;
                     }
                 }
-
+                
             } else {
                 pathlight.add(cells[rowpos][colpos]);
                 i++;
             }
-
+            
         }
-
+        
     }
-
+    
     public void printState() {
         printColNum();
         for (var i = 0; i < rows; i++) {
@@ -525,26 +544,26 @@ public class State {
                     } else {
                         cells[i][j].print();
                     }
-
+                    
                 }
-
+                
                 printRowsNum(j, i);
             }
             System.out.println();
         }
         System.out.println("-------------------------------------------------------------------------");
-
+        
     }
-
+    
     private void printRowsNum(int j, int i) {
         if (j == colmuns - 1) {
             System.out.print(i);
-
+            
         }
     }
-
+    
     private void printColNum() {
-
+        
         for (var j = 0; j < colmuns; j++) {
             if (j > 9) {
                 System.out.print(j + " ");
@@ -554,19 +573,19 @@ public class State {
         }
         System.out.println();
     }
-
+    
     public LinkedList<Cell> getPathlight() {
         return pathlight;
     }
-
+    
     public Mirror[] getMirrors() {
         return mirrors;
     }
-
+    
     public void setMirrors(Mirror[] mirrors) {
         this.mirrors = mirrors;
     }
-
+    
     public boolean isIsWinning() {
         // or
         return isWinning;
@@ -578,45 +597,45 @@ public class State {
 //        else 
 //           return false;
     }
-
+    
     public Wall[] getWalls() {
         return walls;
     }
-
+    
     public void setWalls(Wall[] walls) {
         this.walls = walls;
     }
-
+    
     public int getColmuns() {
         return colmuns;
     }
-
+    
     public int getRows() {
         return rows;
     }
-
+    
     public Light getLight() {
         return light;
     }
-
+    
     public void setLight(Light light) {
         this.light = light;
     }
-
+    
     public Cell[][] getCells() {
         return cells;
     }
-
+    
     public void setCells(Cell[][] cells) {
         this.cells = cells;
     }
-
+    
     public Target getTarget() {
         return target;
     }
-
+    
     public void setTarget(Target target) {
         this.target = target;
     }
-
+    
 }
