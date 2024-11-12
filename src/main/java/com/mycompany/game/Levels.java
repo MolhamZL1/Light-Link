@@ -50,7 +50,7 @@ public class Levels {
         Wall wall7 = new Wall(new Poistion(10, 2));
          Wall wall8 = new Wall(new Poistion(7, 3));
         Wall[] walls = {wall1, wall2, wall3, wall5, wall4, wall6,wall7,wall8};
-        Mirror mirror1 = new RotatedMirror(new Poistion(7, 6),MirrorDirections.horizintal);
+        RotatedMirror mirror1 = new RotatedMirror(new Poistion(7, 6),MirrorDirections.horizintal);
        
         Mirror[] mirrors = {mirror1};
         State grid1 = new State(8, 15, light1, target1, walls, mirrors);

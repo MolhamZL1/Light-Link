@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Player {
 
@@ -13,23 +14,23 @@ public class Player {
     public void startGame() {
         state = new Levels().initGridLevel4();
         //asking();
-     LinkedList<State> states  =state.getNextState();
+        Set<State> states = state.getNextState();
         System.out.println(states.size());
         for (State state1 : states) {
-            
+
             state1.printState();
         }
+
     }
 
     private void asking() {
         state.updateState();
         if (!state.isWinning) {
             askingAboutOperation();
-        }else{
-                
+        } else {
+
             System.out.println("Congratulations !!,You Win!!");
 
-        
         }
     }
 
@@ -67,7 +68,7 @@ public class Player {
 
         try {
             int selectedDirNum = scanner.nextInt();
-            state =Action.turnLightAction(state, selectedDirNum);
+            state = Action.turnLightAction(state, selectedDirNum);
             asking();
         } catch (Exception e) {
             System.out.println("Invalid input. Please try again.");
@@ -101,7 +102,7 @@ public class Player {
             System.out.println("1. Top Right\n2. Top Left\n3. Horizontal\n4. Vertical");
 
             int selectedDirNum = scanner.nextInt();
-            state =Action.turnMirrorAction(state, selectedDirNum, selectedMirror);
+            state = Action.turnMirrorAction(state, selectedDirNum, selectedMirror);
             asking();
         } catch (Exception e) {
             System.out.println("Invalid input. Please try again.");

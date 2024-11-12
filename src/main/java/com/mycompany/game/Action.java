@@ -38,7 +38,7 @@ public class Action {
         if (newDirection != null) {
            
             newstate.light.setDirection(newDirection);
-
+  newstate.updateState();
         } else {
             throw new Exception();
         }
@@ -64,6 +64,7 @@ public class Action {
 
         if (newDirection != null) {
             newstate.mirrors[selectedMirror].setDirection(newDirection);
+          newstate.updateState();
 
         } else {
             throw new Exception();
