@@ -176,9 +176,11 @@ public class State {
         Set<State> availableStates = this.getNextState();
         Queue<State> queue = new LinkedList<>();
         queue.add(this);
-
+        int i = 0;
         while (!queue.isEmpty()) {
             State currentState = queue.poll();
+            currentState.printState();
+            System.out.println(i++);
 
             if (currentState.isIsWinning()) {
                 return currentState;
@@ -200,9 +202,11 @@ public class State {
         Set<State> availableStates = this.getNextState();
         Stack<State> stack = new Stack<>();
         stack.push(this);
-
+        int i = 0;
         while (!stack.isEmpty()) {
             State currentState = stack.pop();
+            currentState.printState();
+            System.out.println(i++);
 
             if (currentState.isIsWinning()) {
                 return currentState;
