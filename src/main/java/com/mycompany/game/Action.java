@@ -9,8 +9,9 @@ package com.mycompany.game;
  * @author USER
  */
 public class Action {
-    static int[] posibleLightActions={1,2,3,4,5,6,7,8};
-    static int[] posibleMirrorActions={1,2,3,4};
+
+    static int[] posibleLightActions = {1, 2, 3, 4, 5, 6, 7, 8};
+    static int[] posibleMirrorActions = {1, 2, 3, 4};
 
     static public State turnLightAction(State state, int selectedDirNum) throws Exception {
         State newstate = new State(state);
@@ -36,18 +37,19 @@ public class Action {
         };
 
         if (newDirection != null) {
-           
+
             newstate.light.setDirection(newDirection);
-  newstate.updateState();
+            newstate.updateState();
         } else {
             throw new Exception();
         }
+        newstate.updateState();
         return newstate;
     }
 
     static public State turnMirrorAction(State state, int selectedDirNum, int selectedMirror) throws Exception {
         State newstate = new State(state);
-        
+
         MirrorDirections newDirection = switch (selectedDirNum) {
             case 1 ->
                 MirrorDirections.topRight;
@@ -56,20 +58,20 @@ public class Action {
             case 3 ->
                 MirrorDirections.horizintal;
             case 4 ->
-                MirrorDirections.vertical;           
-                
+                MirrorDirections.vertical;
+
             default ->
                 null;
         };
 
         if (newDirection != null) {
             newstate.mirrors[selectedMirror].setDirection(newDirection);
-          newstate.updateState();
+            newstate.updateState();
 
         } else {
             throw new Exception();
         }
-      
+newstate.updateState();
         return newstate;
     }
 

@@ -13,15 +13,43 @@ public class Player {
 
     public void startGame() {
         state = new Levels().initGridLevel4();
-        //asking();
-        state.findWinningStateBFS().printState();
+        state.printState();
+       askingplayingMethod();
+        
 //        Set<State> states = state.getNextState();
 //        System.out.println(states.size());
-//        for (State state1 : states) {
+//        for (State state1 : 2states) {
 //
 //            state1.printState();
 //        }
 
+    }
+    private void askingplayingMethod() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("How do you want to play the game");
+        System.out.println("1. Manualy");
+        System.out.println("2. Bfs");
+        System.out.println("3. Dfs");
+
+        try {
+            int selectedOperation = scanner.nextInt();
+            switch (selectedOperation) {
+                case 1 ->
+                    asking();
+                case 2 ->
+                    state.findWinningStateBFS().printState();
+                case 3 ->
+                    state.findWinningStateDFS().printState();
+                default -> {
+                    System.out.println("Invalid number. Please try again.");
+                    askingplayingMethod();
+                }
+
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please try again.");
+            askingplayingMethod();
+        }
     }
 
     private void asking() {
@@ -34,7 +62,7 @@ public class Player {
 
         }
     }
-
+ 
     private void askingAboutOperation() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Choose an action:");
@@ -55,6 +83,7 @@ public class Player {
                     System.out.println("Invalid number. Please try again.");
                     askingAboutOperation();
                 }
+
             }
         } catch (Exception e) {
             System.out.println("Invalid input. Please try again.");

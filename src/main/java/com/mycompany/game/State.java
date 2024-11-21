@@ -50,38 +50,36 @@ public class State {
     public State(State other) {
         this.colmuns = other.colmuns;
         this.rows = other.rows;
-        this.light = other.light.copy(); // Assuming Light has a deepCopy method
-        this.target = other.target.copy(); // Assuming Target has a deepCopy method
+        this.light = other.light.copy();
+        this.target = other.target.copy();
         this.cells = new Cell[other.rows][other.colmuns];
 
         // Deep copy cells
         for (int i = 0; i < other.rows; i++) {
             for (int j = 0; j < other.colmuns; j++) {
-                this.cells[i][j] = other.cells[i][j].copy(); // Assuming Cell has a deepCopy method
+                this.cells[i][j] = other.cells[i][j].copy();
             }
         }
 
         // Deep copy walls
         this.walls = new Wall[other.walls.length];
         for (int i = 0; i < other.walls.length; i++) {
-            this.walls[i] = other.walls[i].copy(); // Assuming Wall has a deepCopy method
+            this.walls[i] = other.walls[i].copy();
         }
 
-        // Deep copy mirrors
         this.mirrors = new Mirror[other.mirrors.length];
         for (int i = 0; i < other.mirrors.length; i++) {
             if (this.mirrors[i] instanceof RotatedMirror) {
                 this.mirrors[i] = new RotatedMirror((RotatedMirror) other.mirrors[i]);
                 return;
             } else {
-                this.mirrors[i] = other.mirrors[i].copy(); // Will return the correct type
+                this.mirrors[i] = other.mirrors[i].copy();
             }
         }
 
-        // Deep copy pathlight
         this.pathlight = new LinkedList<>();
         for (Cell cell : other.pathlight) {
-            this.pathlight.add(cell.copy()); // Assuming Cell has a deepCopy method
+            this.pathlight.add(cell.copy());
         }
 
         this.isWinning = other.isWinning;
@@ -146,27 +144,22 @@ public class State {
 
         State state = (State) o;
 
-        // Check grid dimensions
         if (this.colmuns != state.colmuns || this.rows != state.rows) {
             return false;
         }
 
-        // Compare light position and direction
         if (!this.light.equals(state.light)) {
             return false;
         }
 
-        // Compare target position
         if (!this.target.equals(state.target)) {
             return false;
         }
 
-        // Compare walls
         if (!Arrays.equals(this.walls, state.walls)) {
             return false;
         }
 
-        // Compare mirrors and their directions
         return Arrays.equals(this.mirrors, state.mirrors);
     }
 
@@ -177,8 +170,10 @@ public class State {
         result = 31 * result + Arrays.hashCode(mirrors);
         return result;
     }
+
     public State findWinningStateBFS() {
         Set<State> visitedStates = new HashSet<>();
+        Set<State> availableStates = this.getNextState();
         Queue<State> queue = new LinkedList<>();
         queue.add(this);
 
@@ -186,22 +181,23 @@ public class State {
             State currentState = queue.poll();
 
             if (currentState.isIsWinning()) {
-                return currentState;  // Found the winning state
+                return currentState;
             }
 
             visitedStates.add(currentState);
 
-            // Generate next states and add unvisited ones to the queue
-            for (State nextState :currentState. getNextState()) {
+            for (State nextState : availableStates) {
                 if (!visitedStates.contains(nextState)) {
                     queue.add(nextState);
                 }
             }
         }
-        return null;  // No winning state found
+        return null;
     }
-      public State findWinningStateDFS() {
+
+    public State findWinningStateDFS() {
         Set<State> visitedStates = new HashSet<>();
+        Set<State> availableStates = this.getNextState();
         Stack<State> stack = new Stack<>();
         stack.push(this);
 
@@ -209,19 +205,18 @@ public class State {
             State currentState = stack.pop();
 
             if (currentState.isIsWinning()) {
-                return currentState;  // Found the winning state
+                return currentState;
             }
 
             visitedStates.add(currentState);
 
-            // Generate next states and add unvisited ones to the stack
-            for (State nextState :currentState. getNextState()) {
+            for (State nextState : availableStates) {
                 if (!visitedStates.contains(nextState)) {
                     stack.push(nextState);
                 }
             }
         }
-        return null;  // No winning state found
+        return null;
     }
 
     public Set<State> getNextState() {
@@ -233,11 +228,9 @@ public class State {
 
     private void generateStates(State currentState, int mirrorIndex, Set<State> states) {
         try {
-            // Apply each possible action for the light to create new states
             for (int lightAction : Action.posibleLightActions) {
                 State lightModifiedState = Action.turnLightAction(currentState, lightAction);
 
-                // After modifying the light, recursively handle mirrors
                 applyMirrorActions(lightModifiedState, mirrorIndex, states);
             }
         } catch (Exception e) {
@@ -247,25 +240,20 @@ public class State {
 
     private void applyMirrorActions(State state, int mirrorIndex, Set<State> states) {
         if (mirrorIndex >= state.mirrors.length) {
-            // Add only if unique based on equals/hashCode
 
             states.add(state);
             return;
         }
 
-        // Check if the mirror at the current index is a RotatedMirror
         if (!(state.mirrors[mirrorIndex] instanceof RotatedMirror)) {
-            // Skip this mirror and move to the next
             applyMirrorActions(state, mirrorIndex + 1, states);
             return;
         }
 
-        // Apply each possible action to the current mirror
         for (int mirrorAction : Action.posibleMirrorActions) {
             try {
                 State mirrorModifiedState = Action.turnMirrorAction(state, mirrorAction, mirrorIndex);
 
-                // Recurse to handle the next mirror
                 applyMirrorActions(mirrorModifiedState, mirrorIndex + 1, states);
             } catch (Exception e) {
                 System.err.println("Error in generating mirror actions: " + e.getMessage());
