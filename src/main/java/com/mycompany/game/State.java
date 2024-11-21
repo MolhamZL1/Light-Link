@@ -10,7 +10,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  *
@@ -174,6 +176,52 @@ public class State {
         result = 31 * result + Arrays.hashCode(walls);
         result = 31 * result + Arrays.hashCode(mirrors);
         return result;
+    }
+    public State findWinningStateBFS() {
+        Set<State> visitedStates = new HashSet<>();
+        Queue<State> queue = new LinkedList<>();
+        queue.add(this);
+
+        while (!queue.isEmpty()) {
+            State currentState = queue.poll();
+
+            if (currentState.isIsWinning()) {
+                return currentState;  // Found the winning state
+            }
+
+            visitedStates.add(currentState);
+
+            // Generate next states and add unvisited ones to the queue
+            for (State nextState :currentState. getNextState()) {
+                if (!visitedStates.contains(nextState)) {
+                    queue.add(nextState);
+                }
+            }
+        }
+        return null;  // No winning state found
+    }
+      public State findWinningStateDFS() {
+        Set<State> visitedStates = new HashSet<>();
+        Stack<State> stack = new Stack<>();
+        stack.push(this);
+
+        while (!stack.isEmpty()) {
+            State currentState = stack.pop();
+
+            if (currentState.isIsWinning()) {
+                return currentState;  // Found the winning state
+            }
+
+            visitedStates.add(currentState);
+
+            // Generate next states and add unvisited ones to the stack
+            for (State nextState :currentState. getNextState()) {
+                if (!visitedStates.contains(nextState)) {
+                    stack.push(nextState);
+                }
+            }
+        }
+        return null;  // No winning state found
     }
 
     public Set<State> getNextState() {

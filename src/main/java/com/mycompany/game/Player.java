@@ -14,12 +14,13 @@ public class Player {
     public void startGame() {
         state = new Levels().initGridLevel4();
         //asking();
-        Set<State> states = state.getNextState();
-        System.out.println(states.size());
-        for (State state1 : states) {
-
-            state1.printState();
-        }
+        state.findWinningStateBFS().printState();
+//        Set<State> states = state.getNextState();
+//        System.out.println(states.size());
+//        for (State state1 : states) {
+//
+//            state1.printState();
+//        }
 
     }
 
