@@ -223,6 +223,72 @@ public class State {
         return null;
     }
 
+    public Set<State> getNextStatemodified() {
+        HashSet<State> uniqueStates = new HashSet<>();
+        // getLastRotatedMirrorHitByLight
+
+        int lastmirrorIndex = 0;
+        for (int i = 0; i < mirrors.length; i++) {
+            if (mirrors[i] instanceof RotatedMirror) {
+                if (isLastMirrorHitByLight(mirrors[i])) {
+
+                    lastmirrorIndex = i;
+                }
+
+            }
+        }
+
+        for (int mirrorAction : Action.posibleMirrorActions) {
+            try {
+
+                State mirrorModifiedState = Action.turnMirrorAction(this, mirrorAction, lastmirrorIndex);
+                uniqueStates.add(mirrorModifiedState);
+
+            } catch (Exception e) {
+                System.err.println("Error in generating mirror actions: " + e.getMessage());
+            }
+        }
+
+        return uniqueStates;
+    }
+
+    boolean isLastMirrorHitByLight(Mirror mirror) {
+
+        int count = 0;
+        LinkedList<Poistion> postions = getPostionsRoundMirror(mirror);
+        for (Cell pathCell : pathlight) {
+            if (count > 1) {
+                return false;
+            }
+
+            for (Poistion postion : postions) {
+                if (pathCell.getPoistion().equals(postion)) {
+                    count++;
+                    break;
+                }
+            }
+
+        }
+        return count == 1;
+
+    }
+
+    private LinkedList<Poistion> getPostionsRoundMirror(Mirror mirror) {
+        LinkedList<Poistion> postions = new LinkedList<>();
+        int col = mirror.getPoistion().getColPosition();
+        int row = mirror.getPoistion().getRowPosition();
+        postions.add(new Poistion(row - 1, col));
+        postions.add(new Poistion(row + 1, col));
+        postions.add(new Poistion(row, col - 1));
+        postions.add(new Poistion(row, col + 1));
+        postions.add(new Poistion(row - 1, col - 1));
+        postions.add(new Poistion(row + 1, col + 1));
+        postions.add(new Poistion(row + 1, col - 1));
+        postions.add(new Poistion(row - 1, col + 1));
+
+        return postions;
+    }
+
     public Set<State> getNextState() {
         HashSet<State> uniqueStates = new HashSet<>();
         generateStates(new State(this), 0, uniqueStates);

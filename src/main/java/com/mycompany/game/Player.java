@@ -14,14 +14,21 @@ public class Player {
     public void startGame() {
         state = new Levels().initGridLevel4();
         state.printState();
-       askingplayingMethod();
+       //askingplayingMethod();
         
-//        Set<State> states = state.getNextState();
-//        System.out.println(states.size());
-//        for (State state1 : 2states) {
-//
-//            state1.printState();
-//        }
+        Set<State> states = state.getNextStatemodified();
+        System.out.println(states.size());
+        for (State state1 : states) {
+            
+            state1.printState();
+             Set<State> states1 = state1.getNextStatemodified();
+        System.out.println(states.size());
+        for (State state11 : states1) {
+            
+            state11.printState();
+           
+        }System.out.println("-----------------");
+        }
 
     }
     private void askingplayingMethod() {

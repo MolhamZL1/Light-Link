@@ -8,8 +8,8 @@ package com.mycompany.game;
  *
  * @author USER
  */
-
 public class Poistion {
+
     private int rowPosition;
     private int colPosition;
 
@@ -23,8 +23,9 @@ public class Poistion {
         this.rowPosition = other.rowPosition;
         this.colPosition = other.colPosition;
     }
-    public Poistion copy(){
-    return new Poistion(this);
+
+    public Poistion copy() {
+        return new Poistion(this);
     }
 
     public int getRowPosition() {
@@ -41,5 +42,22 @@ public class Poistion {
 
     public void setColPosition(int colPosition) {
         this.colPosition = colPosition;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true; // Check if both references are the same
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false; // Ensure the object is of the same class
+        }
+        Poistion poistion = (Poistion) obj; // Cast the object to Poistion
+        return rowPosition == poistion.rowPosition && colPosition == poistion.colPosition; // Compare fields
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * rowPosition + colPosition; // Generate a hash based on fields
     }
 }
