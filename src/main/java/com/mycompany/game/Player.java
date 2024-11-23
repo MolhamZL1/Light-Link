@@ -14,8 +14,8 @@ public class Player {
     public void startGame() {
         state = new Levels().initGridLevel4();
         state.printState();
-       askingplayingMethod();
-        
+        askingplayingMethod();
+
 //        Set<State> states = state.getNextStatemodified();
 //        System.out.println(states.size());
 //        for (State state1 : states) {
@@ -29,8 +29,8 @@ public class Player {
 //           
 //        }System.out.println("-----------------");
 //        }
-
     }
+
     private void askingplayingMethod() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("How do you want to play the game");
@@ -69,7 +69,7 @@ public class Player {
 
         }
     }
- 
+
     private void askingAboutOperation() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Choose an action:");

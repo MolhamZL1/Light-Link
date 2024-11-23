@@ -176,8 +176,11 @@ public class State {
         Set<State> visitedStates = new HashSet<>();
         Queue<State> queue = new LinkedList<>();
         queue.add(this);
+        int i = 0;
         while (!queue.isEmpty()) {
             State currentState = queue.poll();
+            System.out.println(i);
+            i++;
             currentState.printState();
 
             if (currentState.isIsWinning()) {
@@ -186,7 +189,7 @@ public class State {
 
             visitedStates.add(currentState);
 
-            for (State nextState :currentState. getNextStatemodified()) {
+            for (State nextState : currentState.getNextStates()) {
                 if (!visitedStates.contains(nextState)) {
                     queue.add(nextState);
                 }
@@ -199,9 +202,11 @@ public class State {
         Set<State> visitedStates = new HashSet<>();
         Stack<State> stack = new Stack<>();
         stack.push(this);
-
+        int i = 0;
         while (!stack.isEmpty()) {
             State currentState = stack.pop();
+            System.out.println(i);
+            i++;
             currentState.printState();
 
             if (currentState.isIsWinning()) {
@@ -212,7 +217,7 @@ public class State {
                 visitedStates.add(currentState);
 
                 // Get immediate children and push them to the stack
-                for (State nextState : currentState.getNextStatemodified()) {
+                for (State nextState : currentState.getNextStates()) {
                     if (!visitedStates.contains(nextState)) {
 
                         stack.push(nextState);
@@ -224,7 +229,7 @@ public class State {
         return null; // No winning state found
     }
 
-    public Set<State> getNextStatemodified() {
+    public Set<State> getNextStates() {
         HashSet<State> uniqueStates = new HashSet<>();
         // getLastRotatedMirrorHitByLight
         if (this.isWinning) {
@@ -264,27 +269,6 @@ public class State {
 
         }
         return lastmirrorIndex;
-    }
-
-    boolean isLastMirrorHitByLight(Mirror mirror) {
-
-        int count = 0;
-        LinkedList<Poistion> postions = getPostionsRoundMirror(mirror);
-        for (Cell pathCell : pathlight) {
-            if (count > 1) {
-                return false;
-            }
-
-            for (Poistion postion : postions) {
-                if (pathCell.getPoistion().equals(postion)) {
-                    count++;
-                    break;
-                }
-            }
-
-        }
-        return count == 1;
-
     }
 
     boolean isTargetHitedByLight() {
@@ -333,48 +317,6 @@ public class State {
         postions.add(new Poistion(row - 1, col + 1));
 
         return postions;
-    }
-
-    public Set<State> getNextState() {
-        HashSet<State> uniqueStates = new HashSet<>();
-        generateStates(new State(this), 0, uniqueStates);
-
-        return uniqueStates;
-    }
-
-    private void generateStates(State currentState, int mirrorIndex, Set<State> states) {
-        try {
-            for (int lightAction : Action.posibleLightActions) {
-                State lightModifiedState = Action.turnLightAction(currentState, lightAction);
-
-                applyMirrorActions(lightModifiedState, mirrorIndex, states);
-            }
-        } catch (Exception e) {
-            System.err.println("Error in generating light actions: " + e.getMessage());
-        }
-    }
-
-    private void applyMirrorActions(State state, int mirrorIndex, Set<State> states) {
-        if (mirrorIndex >= state.mirrors.length) {
-
-            states.add(state);
-            return;
-        }
-
-        if (!(state.mirrors[mirrorIndex] instanceof RotatedMirror)) {
-            applyMirrorActions(state, mirrorIndex + 1, states);
-            return;
-        }
-
-        for (int mirrorAction : Action.posibleMirrorActions) {
-            try {
-                State mirrorModifiedState = Action.turnMirrorAction(state, mirrorAction, mirrorIndex);
-
-                applyMirrorActions(mirrorModifiedState, mirrorIndex + 1, states);
-            } catch (Exception e) {
-                System.err.println("Error in generating mirror actions: " + e.getMessage());
-            }
-        }
     }
 
     public State updateState() {
