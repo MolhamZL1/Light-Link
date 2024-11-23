@@ -179,9 +179,9 @@ public class State {
         int i = 0;
         while (!queue.isEmpty()) {
             State currentState = queue.poll();
-            System.out.println(i);
-            i++;
-            currentState.printState();
+//            System.out.println(i);
+//            i++;
+//            currentState.printState();
 
             if (currentState.isIsWinning()) {
                 return currentState;
@@ -205,9 +205,9 @@ public class State {
         int i = 0;
         while (!stack.isEmpty()) {
             State currentState = stack.pop();
-            System.out.println(i);
-            i++;
-            currentState.printState();
+//            System.out.println(i);
+//            i++;
+//            currentState.printState();
 
             if (currentState.isIsWinning()) {
                 return currentState; // Found the winning state
