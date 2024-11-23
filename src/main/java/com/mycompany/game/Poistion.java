@@ -60,4 +60,9 @@ public class Poistion {
     public int hashCode() {
         return 31 * rowPosition + colPosition; // Generate a hash based on fields
     }
+
+    @Override
+    public String toString() {
+        return "Poistion{" + "rowPosition=" + rowPosition + ", colPosition=" + colPosition + '}';
+    }
 }

@@ -26,6 +26,7 @@ public class State {
     Cell[][] cells;
     Target target;
     Wall[] walls;
+    State father;
     Mirror[] mirrors;
     boolean isWinning;
     private LinkedList<Cell> pathlight;
@@ -199,49 +200,49 @@ public class State {
 
     public State findWinningStateDFS() {
         Set<State> visitedStates = new HashSet<>();
-        Set<State> availableStates = this.getNextState();
         Stack<State> stack = new Stack<>();
         stack.push(this);
-        int i = 0;
+
         while (!stack.isEmpty()) {
             State currentState = stack.pop();
             currentState.printState();
-            System.out.println(i++);
 
             if (currentState.isIsWinning()) {
-                return currentState;
+                return currentState; // Found the winning state
             }
 
-            visitedStates.add(currentState);
+            if (!visitedStates.contains(currentState)) {
+                visitedStates.add(currentState);
 
-            for (State nextState : availableStates) {
-                if (!visitedStates.contains(nextState)) {
-                    stack.push(nextState);
+                // Get immediate children and push them to the stack
+                for (State nextState : currentState.getNextStatemodified()) {
+                    if (!visitedStates.contains(nextState)) {
+                        
+                        stack.push(nextState);
+                    }
                 }
             }
         }
-        return null;
+
+        return null; // No winning state found
     }
 
     public Set<State> getNextStatemodified() {
         HashSet<State> uniqueStates = new HashSet<>();
         // getLastRotatedMirrorHitByLight
-
-        int lastmirrorIndex = 0;
-        for (int i = 0; i < mirrors.length; i++) {
-            if (mirrors[i] instanceof RotatedMirror) {
-                if (isLastMirrorHitByLight(mirrors[i])) {
-
-                    lastmirrorIndex = i;
-                }
-
-            }
+        if (this.isWinning) {
+            return uniqueStates;
+        }
+        int lastmirrorIndex = getLastMirrorHittedByLightIndex();
+        if (lastmirrorIndex == -1) {
+            return uniqueStates;
         }
 
         for (int mirrorAction : Action.posibleMirrorActions) {
             try {
 
                 State mirrorModifiedState = Action.turnMirrorAction(this, mirrorAction, lastmirrorIndex);
+                mirrorModifiedState.father = this;
                 uniqueStates.add(mirrorModifiedState);
 
             } catch (Exception e) {
@@ -250,6 +251,22 @@ public class State {
         }
 
         return uniqueStates;
+    }
+
+    private int getLastMirrorHittedByLightIndex() {
+        int lastmirrorIndex = -1;
+        for (int i = pathlight.size() - 1; i >= 0; i--) {
+            Cell cell = pathlight.get(i);
+            for (int j = 0; j < mirrors.length; j++) {
+
+                if (cell.getPoistion().equals(mirrors[j].getPoistion())) {
+                    lastmirrorIndex = j;
+                    return lastmirrorIndex;
+                }
+            }
+
+        }
+        return lastmirrorIndex;
     }
 
     boolean isLastMirrorHitByLight(Mirror mirror) {
@@ -271,6 +288,38 @@ public class State {
         }
         return count == 1;
 
+    }
+
+    boolean isTargetHitedByLight() {
+        LinkedList<Poistion> postions = getPostionsRoundTarget();
+
+        for (Cell pathCell : pathlight) {
+
+            for (Poistion postion : postions) {
+                if (pathCell.getPoistion().equals(postion)) {
+
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
+    private LinkedList<Poistion> getPostionsRoundTarget() {
+        LinkedList<Poistion> postions = new LinkedList<>();
+        int col = target.getPoistion().getColPosition();
+        int row = target.getPoistion().getRowPosition();
+        postions.add(new Poistion(row - 1, col));
+        postions.add(new Poistion(row + 1, col));
+        postions.add(new Poistion(row, col - 1));
+        postions.add(new Poistion(row, col + 1));
+        postions.add(new Poistion(row - 1, col - 1));
+        postions.add(new Poistion(row + 1, col + 1));
+        postions.add(new Poistion(row + 1, col - 1));
+        postions.add(new Poistion(row - 1, col + 1));
+
+        return postions;
     }
 
     private LinkedList<Poistion> getPostionsRoundMirror(Mirror mirror) {
@@ -382,15 +431,18 @@ public class State {
                 switch (mirror.getDirection()) {
 
                     case horizintal -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.BottomRight, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
                     case vertical -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.TopLeft, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
 
                     default -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         break OUTER;
                     }
                 }
@@ -420,15 +472,18 @@ public class State {
             } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
                 switch (mirror.getDirection()) {
                     case horizintal -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.BottomRight, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
                     case vertical -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.TopLeft, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
 
                     default -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         break OUTER;
                     }
                 }
@@ -460,15 +515,18 @@ public class State {
             } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
                 switch (mirror.getDirection()) {
                     case horizintal -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.BottomLeft, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
                     case vertical -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.TopRight, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
 
                     default -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         break OUTER;
                     }
                 }
@@ -500,15 +558,18 @@ public class State {
             } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
                 switch (mirror.getDirection()) {
                     case horizintal -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.TopRight, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
                     case vertical -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.BottomLeft, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
 
                     default -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         break OUTER;
                     }
                 }
@@ -540,15 +601,18 @@ public class State {
             } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
                 switch (mirror.getDirection()) {
                     case topRight -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.Top, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
                     case topLeft -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.Bottom, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
 
                     default -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         break OUTER;
                     }
                 }
@@ -580,15 +644,18 @@ public class State {
             } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
                 switch (mirror.getDirection()) {
                     case topRight -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.Bottom, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
                     case topLeft -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.Top, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
 
                     default -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         break OUTER;
                     }
                 }
@@ -620,15 +687,18 @@ public class State {
             } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
                 switch (mirror.getDirection()) {
                     case topRight -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.Right, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
                     case topLeft -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.Left, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
 
                     default -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         break OUTER;
                     }
                 }
@@ -660,15 +730,18 @@ public class State {
             } else if (cells[rowpos][colpos] instanceof Mirror mirror) {
                 switch (mirror.getDirection()) {
                     case topRight -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.Left, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
                     case topLeft -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         settingPathLight(Directions.Right, new Poistion(rowpos, colpos));
                         break OUTER;
                     }
 
                     default -> {
+                        pathlight.add(cells[rowpos][colpos]);
                         break OUTER;
                     }
                 }
