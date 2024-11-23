@@ -174,14 +174,11 @@ public class State {
 
     public State findWinningStateBFS() {
         Set<State> visitedStates = new HashSet<>();
-        Set<State> availableStates = this.getNextState();
         Queue<State> queue = new LinkedList<>();
         queue.add(this);
-        int i = 0;
         while (!queue.isEmpty()) {
             State currentState = queue.poll();
             currentState.printState();
-            System.out.println(i++);
 
             if (currentState.isIsWinning()) {
                 return currentState;
@@ -189,7 +186,7 @@ public class State {
 
             visitedStates.add(currentState);
 
-            for (State nextState : availableStates) {
+            for (State nextState :currentState. getNextStatemodified()) {
                 if (!visitedStates.contains(nextState)) {
                     queue.add(nextState);
                 }
@@ -217,7 +214,7 @@ public class State {
                 // Get immediate children and push them to the stack
                 for (State nextState : currentState.getNextStatemodified()) {
                     if (!visitedStates.contains(nextState)) {
-                        
+
                         stack.push(nextState);
                     }
                 }
