@@ -7,9 +7,12 @@ package com.mycompany.game;
 import static com.mycompany.game.MirrorDirections.horizintal;
 import static com.mycompany.game.MirrorDirections.vertical;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Objects;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
@@ -18,10 +21,11 @@ import java.util.Stack;
  *
  * @author USER
  */
-public class State {
+public class State implements Comparable<State> {
 
     int colmuns;
     int rows;
+    private int cost;
     Light light;
     Cell[][] cells;
     Target target;
@@ -41,6 +45,7 @@ public class State {
         this.target = target;
         this.mirrors = mirrors;
         this.isWinning = false;
+        cost = 0;
         updateState();
         //initCells();
         // printState();
@@ -145,6 +150,7 @@ public class State {
 
         State state = (State) o;
 
+        // Check structural equality
         if (this.colmuns != state.colmuns || this.rows != state.rows) {
             return false;
         }
@@ -161,15 +167,54 @@ public class State {
             return false;
         }
 
-        return Arrays.equals(this.mirrors, state.mirrors);
+        if (!Arrays.equals(this.mirrors, state.mirrors)) {
+            return false;
+        }
+
+        // Include cost in equality check
+        return this.cost == state.cost;
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(colmuns, rows, light, target, isWinning);
+        // Calculate hash code with cost included
+        int result = Objects.hash(colmuns, rows, light, target, isWinning, cost);
         result = 31 * result + Arrays.hashCode(walls);
         result = 31 * result + Arrays.hashCode(mirrors);
         return result;
+    }
+
+    @Override
+    public int compareTo(State other) {
+        return Integer.compare(this.cost, other.cost); // Compare states based on cost
+    }
+
+    public State findWinningStateUcs() {
+        Set<State> visitedStates = new HashSet<>();
+        PriorityQueue<State> priorityQueue = new PriorityQueue<>(); // Uses compareTo from State
+
+        priorityQueue.add(this);
+
+        int i = 0;
+        while (!priorityQueue.isEmpty()) {
+            State currentState = priorityQueue.poll();
+            System.out.println("Iteration: " + i);
+            i++;
+            currentState.printState();
+
+            if (currentState.isIsWinning()) {
+                return currentState; 
+            }
+
+            visitedStates.add(currentState);
+
+            for (State nextState : currentState.getNextStates()) {
+                if (nextState.pathlight.size()>currentState.pathlight.size()&&!visitedStates.contains(nextState)) {
+                    priorityQueue.add(nextState); 
+                }
+            }
+        }
+        return null;
     }
 
     public State findWinningStateBFS() {
@@ -179,9 +224,9 @@ public class State {
         int i = 0;
         while (!queue.isEmpty()) {
             State currentState = queue.poll();
-//            System.out.println(i);
-//            i++;
-//            currentState.printState();
+            System.out.println(i);
+            i++;
+            currentState.printState();
 
             if (currentState.isIsWinning()) {
                 return currentState;
@@ -210,13 +255,13 @@ public class State {
 //            currentState.printState();
 
             if (currentState.isIsWinning()) {
-                return currentState; // Found the winning state
+                return currentState; 
             }
 
             if (!visitedStates.contains(currentState)) {
                 visitedStates.add(currentState);
 
-                // Get immediate children and push them to the stack
+              
                 for (State nextState : currentState.getNextStates()) {
                     if (!visitedStates.contains(nextState)) {
 
@@ -226,7 +271,7 @@ public class State {
             }
         }
 
-        return null; // No winning state found
+        return null; 
     }
 
     public Set<State> getNextStates() {
@@ -245,6 +290,8 @@ public class State {
 
                 State mirrorModifiedState = Action.turnMirrorAction(this, mirrorAction, lastmirrorIndex);
                 mirrorModifiedState.father = this;
+
+                mirrorModifiedState.cost =this.cost+ calculateCost();
                 uniqueStates.add(mirrorModifiedState);
 
             } catch (Exception e) {
@@ -253,6 +300,30 @@ public class State {
         }
 
         return uniqueStates;
+    }
+
+    int calculateCost() {
+        if (this.father == null) {
+            return 0;
+        }
+
+        int fatherSize = this.father.pathlight.size();
+        int childSize = this.pathlight.size();
+        LinkedList<Cell> intersectPathLight = new LinkedList<Cell>();
+        for (Cell cell1 : this.pathlight) {
+            for (Cell cell2 : this.father.pathlight) {
+                if (cell1.equals(cell2)) {
+                  
+                    intersectPathLight.add(cell2);
+                }
+            }
+
+        }
+     
+        int finalCost = (fatherSize - intersectPathLight.size()) + (childSize - intersectPathLight.size());
+ 
+        return finalCost;
+
     }
 
     private int getLastMirrorHittedByLightIndex() {
@@ -764,6 +835,14 @@ public class State {
 //        }
 //        else 
 //           return false;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
     }
 
     public Wall[] getWalls() {

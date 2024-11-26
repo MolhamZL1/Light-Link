@@ -4,6 +4,9 @@
  */
 package com.mycompany.game;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  *
  * @author USER
@@ -32,6 +35,19 @@ public class Cell {
     public void setPoistion(Poistion poistion) {
         this.poistion = poistion;
     }
+
+ @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true; // Reference equality
+        if (obj == null || getClass() != obj.getClass()) return false; // Type and null check
+        Cell cell = (Cell) obj;
+        return Objects.equals(poistion, cell.poistion); // Field-level equality
+    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(poistion); // Hash based on fields
+//    }
 
     public void print() {
         System.out.print(" . ");

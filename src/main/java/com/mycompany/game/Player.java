@@ -33,10 +33,11 @@ public class Player {
 
     private void askingplayingMethod() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("How do you want to play the game");
+        System.out.println("How do you want to play the game?");
         System.out.println("1. Manualy");
-        System.out.println("2. Bfs");
-        System.out.println("3. Dfs");
+        System.out.println("2. BFS");
+        System.out.println("3. DFS");
+        System.out.println("4. UCS");
 
         try {
             int selectedOperation = scanner.nextInt();
@@ -47,6 +48,8 @@ public class Player {
                     state.findWinningStateBFS().printState();
                 case 3 ->
                     state.findWinningStateDFS().printState();
+                case 4 ->
+                    state.findWinningStateUcs().printState();
                 default -> {
                     System.out.println("Invalid number. Please try again.");
                     askingplayingMethod();
@@ -54,13 +57,14 @@ public class Player {
 
             }
         } catch (Exception e) {
-            System.out.println("Invalid input. Please try again.");
+            System.out.println("Invalid input. Please try again.method");
             askingplayingMethod();
         }
     }
 
     private void asking() {
         state.updateState();
+        state.printState();
         if (!state.isWinning) {
             askingAboutOperation();
         } else {
@@ -93,7 +97,7 @@ public class Player {
 
             }
         } catch (Exception e) {
-            System.out.println("Invalid input. Please try again.");
+            System.out.println("Invalid input. Please try again.asking");
             askingAboutOperation();
         }
     }
@@ -108,7 +112,7 @@ public class Player {
             state = Action.turnLightAction(state, selectedDirNum);
             asking();
         } catch (Exception e) {
-            System.out.println("Invalid input. Please try again.");
+            System.out.println("Invalid input. Please try again.light");
             askingAboutTurningLight();
         }
     }
@@ -142,7 +146,7 @@ public class Player {
             state = Action.turnMirrorAction(state, selectedDirNum, selectedMirror);
             asking();
         } catch (Exception e) {
-            System.out.println("Invalid input. Please try again.");
+            System.out.println("Invalid input. Please try again.mirror");
             askingAboutTurningMirrors();
         }
     }
