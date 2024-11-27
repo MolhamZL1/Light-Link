@@ -211,6 +211,21 @@ public class State implements Comparable<State> {
             for (State nextState : currentState.getNextStates()) {
                 if (nextState.pathlight.size() > currentState.pathlight.size() && !visitedStates.contains(nextState)) {
                     priorityQueue.add(nextState);
+                    nextState.cost = currentState.cost + calculateCost(currentState, nextState);
+                }
+                else if(visitedStates.contains(nextState)){
+                    State existingState=null;
+                    for (State visitedState : visitedStates) {
+                        if(visitedState.equals(nextState))
+                        existingState=visitedState;
+                        break;
+                    }
+                    
+                if(existingState!=null&&nextState.cost<existingState.cost){
+                priorityQueue.remove(existingState);
+                priorityQueue.add(nextState);
+                nextState.father=currentState;
+                }
                 }
             }
         }
@@ -288,9 +303,9 @@ public class State implements Comparable<State> {
             try {
 
                 State mirrorModifiedState = Action.turnMirrorAction(this, mirrorAction, lastmirrorIndex);
-                mirrorModifiedState.father = this;
+              //  mirrorModifiedState.father = this;
 
-                mirrorModifiedState.cost = this.cost + calculateCost();
+               // mirrorModifiedState.cost = this.cost + calculateCost(this, mirrorModifiedState);
                 uniqueStates.add(mirrorModifiedState);
 
             } catch (Exception e) {
@@ -301,16 +316,16 @@ public class State implements Comparable<State> {
         return uniqueStates;
     }
 
-    int calculateCost() {
-        if (this.father == null) {
+    int calculateCost(State parent, State child) {
+        if (parent == null) {
             return 0;
         }
 
-        int fatherSize = this.father.pathlight.size();
-        int childSize = this.pathlight.size();
+        int fatherSize = parent.pathlight.size();
+        int childSize = child.pathlight.size();
         LinkedList<Cell> intersectPathLight = new LinkedList<Cell>();
-        for (Cell cell1 : this.pathlight) {
-            for (Cell cell2 : this.father.pathlight) {
+        for (Cell cell1 : child.pathlight) {
+            for (Cell cell2 : parent.pathlight) {
                 if (cell1.equals(cell2)) {
 
                     intersectPathLight.add(cell2);
