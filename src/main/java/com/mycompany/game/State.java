@@ -213,11 +213,11 @@ public class State implements Comparable<State> {
                     priorityQueue.add(nextState);
                     nextState.cost = currentState.cost + calculateCost(currentState, nextState);
                 }
-                else if(visitedStates.contains(nextState)){
+                else if(priorityQueue.contains(nextState)){
                     State existingState=null;
-                    for (State visitedState : visitedStates) {
-                        if(visitedState.equals(nextState))
-                        existingState=visitedState;
+                    for (State ex : priorityQueue) {
+                        if(ex.equals(nextState))
+                        existingState=ex;
                         break;
                     }
                     
