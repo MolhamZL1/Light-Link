@@ -38,18 +38,32 @@ public class Player {
         System.out.println("2. BFS");
         System.out.println("3. DFS");
         System.out.println("4. UCS");
+        System.out.println("5. EXIT");
 
         try {
             int selectedOperation = scanner.nextInt();
             switch (selectedOperation) {
-                case 1 ->
+                case 1 -> {
                     asking();
-                case 2 ->
+                    askingplayingMethod();
+                }
+
+                case 2 -> {
                     state.findWinningStateBFS().printState();
-                case 3 ->
+                    askingplayingMethod();
+                }
+                case 3 -> {
                     state.findWinningStateDFS().printState();
-                case 4 ->
+                    askingplayingMethod();
+                }
+
+                case 4 -> {
                     state.findWinningStateUcs().printState();
+                    askingplayingMethod();
+                }
+
+                case 5 ->
+                    System.exit(0);
                 default -> {
                     System.out.println("Invalid number. Please try again.");
                     askingplayingMethod();

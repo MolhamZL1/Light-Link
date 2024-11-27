@@ -198,19 +198,19 @@ public class State implements Comparable<State> {
         int i = 0;
         while (!priorityQueue.isEmpty()) {
             State currentState = priorityQueue.poll();
-            System.out.println("Iteration: " + i);
+            System.out.println(i);
             i++;
             currentState.printState();
 
             if (currentState.isIsWinning()) {
-                return currentState; 
+                return currentState;
             }
 
             visitedStates.add(currentState);
 
             for (State nextState : currentState.getNextStates()) {
-                if (nextState.pathlight.size()>currentState.pathlight.size()&&!visitedStates.contains(nextState)) {
-                    priorityQueue.add(nextState); 
+                if (nextState.pathlight.size() > currentState.pathlight.size() && !visitedStates.contains(nextState)) {
+                    priorityQueue.add(nextState);
                 }
             }
         }
@@ -250,18 +250,17 @@ public class State implements Comparable<State> {
         int i = 0;
         while (!stack.isEmpty()) {
             State currentState = stack.pop();
-//            System.out.println(i);
-//            i++;
-//            currentState.printState();
+            System.out.println(i);
+            i++;
+            currentState.printState();
 
             if (currentState.isIsWinning()) {
-                return currentState; 
+                return currentState;
             }
 
             if (!visitedStates.contains(currentState)) {
                 visitedStates.add(currentState);
 
-              
                 for (State nextState : currentState.getNextStates()) {
                     if (!visitedStates.contains(nextState)) {
 
@@ -271,7 +270,7 @@ public class State implements Comparable<State> {
             }
         }
 
-        return null; 
+        return null;
     }
 
     public Set<State> getNextStates() {
@@ -291,7 +290,7 @@ public class State implements Comparable<State> {
                 State mirrorModifiedState = Action.turnMirrorAction(this, mirrorAction, lastmirrorIndex);
                 mirrorModifiedState.father = this;
 
-                mirrorModifiedState.cost =this.cost+ calculateCost();
+                mirrorModifiedState.cost = this.cost + calculateCost();
                 uniqueStates.add(mirrorModifiedState);
 
             } catch (Exception e) {
@@ -313,15 +312,15 @@ public class State implements Comparable<State> {
         for (Cell cell1 : this.pathlight) {
             for (Cell cell2 : this.father.pathlight) {
                 if (cell1.equals(cell2)) {
-                  
+
                     intersectPathLight.add(cell2);
                 }
             }
 
         }
-     
+
         int finalCost = (fatherSize - intersectPathLight.size()) + (childSize - intersectPathLight.size());
- 
+
         return finalCost;
 
     }
