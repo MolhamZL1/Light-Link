@@ -241,21 +241,23 @@ public class State implements Comparable<State> {
 
             visitedStates.add(openState);
             int bestHuristicCost = Integer.MAX_VALUE;
+            State bestChild = null;
 
             for (State nextState : openState.getNextStates()) {
 
                 if (!visitedStates.contains(nextState)) {
                     int currentCost = nextState.calculateHuristicDistance();
-                    System.out.println("cost"+currentCost);
+                  //  System.out.println("cost" + currentCost);
                     if (currentCost < bestHuristicCost) {
                         nextState.father = openState;
                         bestHuristicCost = currentCost;
 
-                        openState = nextState;
+                        bestChild = nextState;
                     }
 
                 }
             }
+            openState = bestChild;
         }
         return null;
     }
