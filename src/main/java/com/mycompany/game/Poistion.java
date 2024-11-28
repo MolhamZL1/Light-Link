@@ -45,21 +45,31 @@ public class Poistion {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true; // Check if both references are the same
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false; // Ensure the object is of the same class
-        }
-        Poistion poistion = (Poistion) obj; // Cast the object to Poistion
-        return rowPosition == poistion.rowPosition && colPosition == poistion.colPosition; // Compare fields
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + this.rowPosition;
+        hash = 53 * hash + this.colPosition;
+        return hash;
     }
 
     @Override
-    public int hashCode() {
-        return 31 * rowPosition + colPosition; // Generate a hash based on fields
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Poistion other = (Poistion) obj;
+        if (this.rowPosition != other.rowPosition) {
+            return false;
+        }
+        return this.colPosition == other.colPosition;
     }
+
 
     @Override
     public String toString() {

@@ -6,6 +6,7 @@ package com.mycompany.game;
 
 import static com.mycompany.game.MirrorDirections.horizintal;
 import static com.mycompany.game.MirrorDirections.vertical;
+import java.awt.List;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -140,48 +141,25 @@ public class State implements Comparable<State> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        State state = (State) o;
-
-        // Check structural equality
-        if (this.colmuns != state.colmuns || this.rows != state.rows) {
-            return false;
-        }
-
-        if (!this.light.equals(state.light)) {
-            return false;
-        }
-
-        if (!this.target.equals(state.target)) {
-            return false;
-        }
-
-        if (!Arrays.equals(this.walls, state.walls)) {
-            return false;
-        }
-
-        if (!Arrays.equals(this.mirrors, state.mirrors)) {
-            return false;
-        }
-
-        // Include cost in equality check
-        return this.cost == state.cost;
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.pathlight);
+        return hash;
     }
 
     @Override
-    public int hashCode() {
-        // Calculate hash code with cost included
-        int result = Objects.hash(colmuns, rows, light, target, isWinning, cost);
-        result = 31 * result + Arrays.hashCode(walls);
-        result = 31 * result + Arrays.hashCode(mirrors);
-        return result;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final State other = (State) obj;
+        return Objects.equals(this.pathlight, other.pathlight);
     }
 
     @Override
@@ -209,23 +187,25 @@ public class State implements Comparable<State> {
             visitedStates.add(currentState);
 
             for (State nextState : currentState.getNextStates()) {
-                if (nextState.pathlight.size() > currentState.pathlight.size() && !visitedStates.contains(nextState)) {
+
+                if (!visitedStates.contains(nextState)) {
+
                     priorityQueue.add(nextState);
                     nextState.cost = currentState.cost + calculateCost(currentState, nextState);
-                }
-                else if(priorityQueue.contains(nextState)){
-                    State existingState=null;
+                } else if (priorityQueue.contains(nextState)) {
+                    State existingState = null;
                     for (State ex : priorityQueue) {
-                        if(ex.equals(nextState))
-                        existingState=ex;
+                        if (ex.equals(nextState)) {
+                            existingState = ex;
+                        }
                         break;
                     }
-                    
-                if(existingState!=null&&nextState.cost<existingState.cost){
-                priorityQueue.remove(existingState);
-                priorityQueue.add(nextState);
-                nextState.father=currentState;
-                }
+
+                    if (existingState != null && nextState.cost < existingState.cost) {
+                        priorityQueue.remove(existingState);
+                        priorityQueue.add(nextState);
+                        nextState.father = currentState;
+                    }
                 }
             }
         }
@@ -239,11 +219,12 @@ public class State implements Comparable<State> {
         int i = 0;
         while (!queue.isEmpty()) {
             State currentState = queue.poll();
-            System.out.println(i);
-            i++;
+             System.out.println(i);
+             i++;
             currentState.printState();
 
             if (currentState.isIsWinning()) {
+           
                 return currentState;
             }
 
@@ -303,9 +284,9 @@ public class State implements Comparable<State> {
             try {
 
                 State mirrorModifiedState = Action.turnMirrorAction(this, mirrorAction, lastmirrorIndex);
-              //  mirrorModifiedState.father = this;
+                //  mirrorModifiedState.father = this;
 
-               // mirrorModifiedState.cost = this.cost + calculateCost(this, mirrorModifiedState);
+                // mirrorModifiedState.cost = this.cost + calculateCost(this, mirrorModifiedState);
                 uniqueStates.add(mirrorModifiedState);
 
             } catch (Exception e) {
@@ -323,7 +304,7 @@ public class State implements Comparable<State> {
 
         int fatherSize = parent.pathlight.size();
         int childSize = child.pathlight.size();
-        LinkedList<Cell> intersectPathLight = new LinkedList<Cell>();
+        LinkedList<Cell> intersectPathLight = new LinkedList<>();
         for (Cell cell1 : child.pathlight) {
             for (Cell cell2 : parent.pathlight) {
                 if (cell1.equals(cell2)) {

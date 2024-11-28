@@ -36,18 +36,29 @@ public class Cell {
         this.poistion = poistion;
     }
 
- @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true; // Reference equality
-        if (obj == null || getClass() != obj.getClass()) return false; // Type and null check
-        Cell cell = (Cell) obj;
-        return Objects.equals(poistion, cell.poistion); // Field-level equality
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 61 * hash + Objects.hashCode(this.poistion);
+        return hash;
     }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(poistion); // Hash based on fields
-//    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Cell other = (Cell) obj;
+        return Objects.equals(this.poistion, other.poistion);
+    }
+
+ 
 
     public void print() {
         System.out.print(" . ");

@@ -12,7 +12,7 @@ public class Player {
     private State state;
 
     public void startGame() {
-        state = new Levels().initGridLevel4();
+        state = new Levels().initGridLevel7();
         state.printState();
         askingplayingMethod();
 
