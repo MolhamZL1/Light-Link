@@ -12,7 +12,7 @@ public class Player {
     private State state;
 
     public void startGame() {
-        state = new Levels().initGridLevel7();
+        state = new Levels().chooseRandomLevel();
         state.printState();
         askingplayingMethod();
 
@@ -34,36 +34,46 @@ public class Player {
     private void askingplayingMethod() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("How do you want to play the game?");
-        System.out.println("1. Manualy");
-        System.out.println("2. BFS");
-        System.out.println("3. DFS");
-        System.out.println("4. UCS");
-        System.out.println("5. EXIT");
+        System.out.println("1. Change Level");
+        System.out.println("2. EXIT");
+        System.out.println("3. Manualy");
+        System.out.println("4. BFS");
+        System.out.println("5. DFS");
+        System.out.println("6. UCS");
+        System.out.println("7. Hill Climbing");
+        
 
         try {
             int selectedOperation = scanner.nextInt();
             switch (selectedOperation) {
-                case 1 -> {
+                    case 1 ->
+                    startGame();
+                case 2 ->
+                    System.exit(0);
+                case 3 -> {
                     asking();
                     askingplayingMethod();
                 }
 
-                case 2 -> {
+                case 4 -> {
                     state.findWinningStateBFS().printState();
                     askingplayingMethod();
                 }
-                case 3 -> {
+                case 5 -> {
                     state.findWinningStateDFS().printState();
                     askingplayingMethod();
                 }
 
-                case 4 -> {
+                case 6 -> {
                     state.findWinningStateUcs().printState();
                     askingplayingMethod();
                 }
+                case 7 -> {
+                    state.findWinningStateHillClimbing().printState();
+                    askingplayingMethod();
+                }
 
-                case 5 ->
-                    System.exit(0);
+                
                 default -> {
                     System.out.println("Invalid number. Please try again.");
                     askingplayingMethod();

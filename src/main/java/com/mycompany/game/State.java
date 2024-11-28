@@ -189,16 +189,18 @@ public class State implements Comparable<State> {
             for (State nextState : currentState.getNextStates()) {
 
                 if (!visitedStates.contains(nextState)) {
-
-                    priorityQueue.add(nextState);
+                    nextState.father = currentState;
                     nextState.cost = currentState.cost + calculateCost(currentState, nextState);
+                    priorityQueue.add(nextState);
+
                 } else if (priorityQueue.contains(nextState)) {
                     State existingState = null;
                     for (State ex : priorityQueue) {
                         if (ex.equals(nextState)) {
                             existingState = ex;
+                            break;
                         }
-                        break;
+
                     }
 
                     if (existingState != null && nextState.cost < existingState.cost) {
@@ -212,6 +214,52 @@ public class State implements Comparable<State> {
         return null;
     }
 
+    int calculateHuristicDistance() {
+        Poistion targetPosition = this.target.getPoistion();
+        Poistion currentPoistion = this.pathlight.getLast().getPoistion();
+        int xDiffrence = targetPosition.getColPosition() - currentPoistion.getColPosition();
+        int yDiffrence = targetPosition.getRowPosition() - currentPoistion.getRowPosition();
+        double solution = Math.sqrt((xDiffrence * xDiffrence) + (yDiffrence * yDiffrence));
+        return (int) solution;
+    }
+
+    public State findWinningStateHillClimbing() {
+        Set<State> visitedStates = new HashSet<>();
+
+        State openState = this;
+
+        int i = 0;
+        while (openState != null) {
+
+            System.out.println(i);
+            i++;
+            openState.printState();
+
+            if (openState.isIsWinning()) {
+                return openState;
+            }
+
+            visitedStates.add(openState);
+            int bestHuristicCost = Integer.MAX_VALUE;
+
+            for (State nextState : openState.getNextStates()) {
+
+                if (!visitedStates.contains(nextState)) {
+                    int currentCost = nextState.calculateHuristicDistance();
+                    System.out.println("cost"+currentCost);
+                    if (currentCost < bestHuristicCost) {
+                        nextState.father = openState;
+                        bestHuristicCost = currentCost;
+
+                        openState = nextState;
+                    }
+
+                }
+            }
+        }
+        return null;
+    }
+
     public State findWinningStateBFS() {
         Set<State> visitedStates = new HashSet<>();
         Queue<State> queue = new LinkedList<>();
@@ -219,12 +267,12 @@ public class State implements Comparable<State> {
         int i = 0;
         while (!queue.isEmpty()) {
             State currentState = queue.poll();
-             System.out.println(i);
-             i++;
+            System.out.println(i);
+            i++;
             currentState.printState();
 
             if (currentState.isIsWinning()) {
-           
+
                 return currentState;
             }
 
@@ -232,6 +280,7 @@ public class State implements Comparable<State> {
 
             for (State nextState : currentState.getNextStates()) {
                 if (!visitedStates.contains(nextState)) {
+                    nextState.father = currentState;
                     queue.add(nextState);
                 }
             }
@@ -259,7 +308,7 @@ public class State implements Comparable<State> {
 
                 for (State nextState : currentState.getNextStates()) {
                     if (!visitedStates.contains(nextState)) {
-
+                        nextState.father = currentState;
                         stack.push(nextState);
                     }
                 }
