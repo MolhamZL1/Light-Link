@@ -41,6 +41,7 @@ public class Player {
         System.out.println("5. DFS");
         System.out.println("6. UCS");
         System.out.println("7. Hill Climbing");
+        System.out.println("8. A Star");
         
 
         try {
@@ -72,7 +73,10 @@ public class Player {
                     state.findWinningStateHillClimbing().printState();
                     askingplayingMethod();
                 }
-
+case 8 -> {
+                    state.findWinningState_AStar().printState();
+                    askingplayingMethod();
+                }
                 
                 default -> {
                     System.out.println("Invalid number. Please try again.");

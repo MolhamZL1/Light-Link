@@ -27,6 +27,7 @@ public class State implements Comparable<State> {
     int colmuns;
     int rows;
     private int cost;
+    private int huristic;
     Light light;
     Cell[][] cells;
     Target target;
@@ -47,6 +48,7 @@ public class State implements Comparable<State> {
         this.mirrors = mirrors;
         this.isWinning = false;
         cost = 0;
+        huristic=0;
         updateState();
         //initCells();
         // printState();
@@ -251,6 +253,7 @@ public class State implements Comparable<State> {
                     if (currentCost < bestHuristicCost) {
                         nextState.father = openState;
                         bestHuristicCost = currentCost;
+                        nextState.huristic=currentCost;
 
                         bestChild = nextState;
                     }
