@@ -50,8 +50,8 @@ public class State {
         this.mirrors = mirrors;
         this.isWinning = false;
         cost = 0;
-        huristic=0;
-        f=cost+huristic;
+        huristic = 0;
+        f = cost + huristic;
         updateState();
         //initCells();
         // printState();
@@ -171,8 +171,42 @@ public class State {
 //    public int compareTo(State other) {
 //        return Integer.compare(this.cost, other.cost); // Compare states based on cost
 //    }
-   
-       public State findWinningStateAStar() {
+    int calculateHuristicDistance() {
+        Poistion targetPosition = this.target.getPoistion();
+        Poistion currentPoistion = this.pathlight.getLast().getPoistion();
+        int xDiffrence = targetPosition.getColPosition() - currentPoistion.getColPosition();
+        int yDiffrence = targetPosition.getRowPosition() - currentPoistion.getRowPosition();
+        double solution = Math.sqrt((xDiffrence * xDiffrence) + (yDiffrence * yDiffrence));
+        return (int) solution;
+    }
+
+    int calculateCost(State parent, State child) {
+        if (parent == null) {
+            return 0;
+        }
+
+        int fatherSize = parent.pathlight.size();
+        int childSize = child.pathlight.size();
+        LinkedList<Cell> intersectPathLight = new LinkedList<>();
+        for (Cell cell1 : child.pathlight) {
+            for (Cell cell2 : parent.pathlight) {
+                if (cell1.equals(cell2)) {
+
+                    intersectPathLight.add(cell2);
+                }
+            }
+
+        }
+
+        int finalCost
+                = //(fatherSize - intersectPathLight.size()) +
+                (childSize - intersectPathLight.size());
+
+        return finalCost;
+
+    }
+
+    public State findWinningStateAStar() {
         Set<State> visitedStates = new HashSet<>();
         PriorityQueue<State> priorityQueue = new PriorityQueue<>(new FComprator()); // Uses compareTo from State
 
@@ -192,11 +226,13 @@ public class State {
             visitedStates.add(currentState);
 
             for (State nextState : currentState.getNextStates()) {
+                nextState.cost = currentState.cost + calculateCost(currentState, nextState);
+                nextState.huristic = calculateHuristicDistance();
+                nextState.f = nextState.cost + nextState.huristic;
 
-                if (!priorityQueue.contains(nextState)&& !visitedStates.contains(nextState)) {
+                if (!priorityQueue.contains(nextState) && !visitedStates.contains(nextState)) {
                     nextState.father = currentState;
-                    nextState.cost = currentState.cost + calculateCost(currentState, nextState);
-                     nextState.huristic =  calculateHuristicDistance();
+
                     priorityQueue.add(nextState);
 
                 } else if (priorityQueue.contains(nextState)) {
@@ -209,14 +245,13 @@ public class State {
 
                     }
 
-                    if (existingState != null && nextState.cost < existingState.cost) {
+                    if (existingState != null && existingState.cost >nextState.cost) {
                         priorityQueue.remove(existingState);
-                         nextState.father = currentState;
+                        nextState.father = currentState;
                         priorityQueue.add(nextState);
-                       
+
                     }
-                }
-                else if (visitedStates.contains(nextState)) {
+                } else if (visitedStates.contains(nextState)) {
                     State existingState = null;
                     for (State ex : visitedStates) {
                         if (ex.equals(nextState)) {
@@ -226,11 +261,11 @@ public class State {
 
                     }
 
-                    if (existingState != null && nextState.cost < existingState.cost) {
+                    if (existingState != null && existingState.cost >nextState.cost) {
                         priorityQueue.remove(existingState);
-                         nextState.father = currentState;
+                        nextState.father = currentState;
                         priorityQueue.add(nextState);
-                       
+
                     }
                 }
             }
@@ -285,15 +320,6 @@ public class State {
         return null;
     }
 
-    int calculateHuristicDistance() {
-        Poistion targetPosition = this.target.getPoistion();
-        Poistion currentPoistion = this.pathlight.getLast().getPoistion();
-        int xDiffrence = targetPosition.getColPosition() - currentPoistion.getColPosition();
-        int yDiffrence = targetPosition.getRowPosition() - currentPoistion.getRowPosition();
-        double solution = Math.sqrt((xDiffrence * xDiffrence) + (yDiffrence * yDiffrence));
-        return (int) solution;
-    }
-
     public State findWinningStateHillClimbing() {
         Set<State> visitedStates = new HashSet<>();
 
@@ -318,11 +344,11 @@ public class State {
 
                 if (!visitedStates.contains(nextState)) {
                     int currentCost = nextState.calculateHuristicDistance();
-                  //  System.out.println("cost" + currentCost);
+                    //  System.out.println("cost" + currentCost);
                     if (currentCost < bestHuristicCost) {
                         nextState.father = openState;
                         bestHuristicCost = currentCost;
-                        nextState.huristic=currentCost;
+                        nextState.huristic = currentCost;
 
                         bestChild = nextState;
                     }
@@ -418,30 +444,6 @@ public class State {
         }
 
         return uniqueStates;
-    }
-
-    int calculateCost(State parent, State child) {
-        if (parent == null) {
-            return 0;
-        }
-
-        int fatherSize = parent.pathlight.size();
-        int childSize = child.pathlight.size();
-        LinkedList<Cell> intersectPathLight = new LinkedList<>();
-        for (Cell cell1 : child.pathlight) {
-            for (Cell cell2 : parent.pathlight) {
-                if (cell1.equals(cell2)) {
-
-                    intersectPathLight.add(cell2);
-                }
-            }
-
-        }
-
-        int finalCost = (fatherSize - intersectPathLight.size()) + (childSize - intersectPathLight.size());
-
-        return finalCost;
-
     }
 
     private int getLastMirrorHittedByLightIndex() {

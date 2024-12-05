@@ -64,10 +64,10 @@ public class Levels {
         Wall wall3 = new Wall(new Poistion(5, 4));
         Wall[] walls = {wall1, wall2, wall3};
         RotatedMirror mirror1 = new RotatedMirror(new Poistion(6, 1), MirrorDirections.topRight);
-        FixedMirror mirror2 = new FixedMirror(new Poistion(6, 3), MirrorDirections.topRight);
+        RotatedMirror mirror2 = new RotatedMirror(new Poistion(6, 3), MirrorDirections.topRight);
         RotatedMirror mirror3 = new RotatedMirror(new Poistion(4, 3), MirrorDirections.topLeft);
         RotatedMirror mirror4 = new RotatedMirror(new Poistion(4, 5), MirrorDirections.topRight);
-        FixedMirror mirror5 = new FixedMirror(new Poistion(10, 5), MirrorDirections.topRight);
+        RotatedMirror mirror5 = new RotatedMirror(new Poistion(10, 5), MirrorDirections.topRight);
         Mirror[] mirrors = {mirror1, mirror2, mirror3, mirror4, mirror5};
         State grid1 = new State(8, 15, light1, target1, walls, mirrors);
         return grid1;
