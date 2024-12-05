@@ -8,6 +8,7 @@ import static com.mycompany.game.MirrorDirections.horizintal;
 import static com.mycompany.game.MirrorDirections.vertical;
 import java.awt.List;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -22,12 +23,13 @@ import java.util.Stack;
  *
  * @author USER
  */
-public class State implements Comparable<State> {
+public class State {
 
     int colmuns;
     int rows;
     private int cost;
     private int huristic;
+    private int f;
     Light light;
     Cell[][] cells;
     Target target;
@@ -49,6 +51,7 @@ public class State implements Comparable<State> {
         this.isWinning = false;
         cost = 0;
         huristic=0;
+        f=cost+huristic;
         updateState();
         //initCells();
         // printState();
@@ -164,14 +167,80 @@ public class State implements Comparable<State> {
         return Objects.equals(this.pathlight, other.pathlight);
     }
 
-    @Override
-    public int compareTo(State other) {
-        return Integer.compare(this.cost, other.cost); // Compare states based on cost
+//    @Override
+//    public int compareTo(State other) {
+//        return Integer.compare(this.cost, other.cost); // Compare states based on cost
+//    }
+   
+       public State findWinningStateAStar() {
+        Set<State> visitedStates = new HashSet<>();
+        PriorityQueue<State> priorityQueue = new PriorityQueue<>(new FComprator()); // Uses compareTo from State
+
+        priorityQueue.add(this);
+
+        int i = 0;
+        while (!priorityQueue.isEmpty()) {
+            State currentState = priorityQueue.poll();
+            System.out.println(i);
+            i++;
+            currentState.printState();
+
+            if (currentState.isIsWinning()) {
+                return currentState;
+            }
+
+            visitedStates.add(currentState);
+
+            for (State nextState : currentState.getNextStates()) {
+
+                if (!priorityQueue.contains(nextState)&& !visitedStates.contains(nextState)) {
+                    nextState.father = currentState;
+                    nextState.cost = currentState.cost + calculateCost(currentState, nextState);
+                     nextState.huristic =  calculateHuristicDistance();
+                    priorityQueue.add(nextState);
+
+                } else if (priorityQueue.contains(nextState)) {
+                    State existingState = null;
+                    for (State ex : priorityQueue) {
+                        if (ex.equals(nextState)) {
+                            existingState = ex;
+                            break;
+                        }
+
+                    }
+
+                    if (existingState != null && nextState.cost < existingState.cost) {
+                        priorityQueue.remove(existingState);
+                         nextState.father = currentState;
+                        priorityQueue.add(nextState);
+                       
+                    }
+                }
+                else if (visitedStates.contains(nextState)) {
+                    State existingState = null;
+                    for (State ex : visitedStates) {
+                        if (ex.equals(nextState)) {
+                            existingState = ex;
+                            break;
+                        }
+
+                    }
+
+                    if (existingState != null && nextState.cost < existingState.cost) {
+                        priorityQueue.remove(existingState);
+                         nextState.father = currentState;
+                        priorityQueue.add(nextState);
+                       
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public State findWinningStateUcs() {
         Set<State> visitedStates = new HashSet<>();
-        PriorityQueue<State> priorityQueue = new PriorityQueue<>(); // Uses compareTo from State
+        PriorityQueue<State> priorityQueue = new PriorityQueue<>(new CostComparator()); // Uses compareTo from State
 
         priorityQueue.add(this);
 
@@ -932,6 +1001,14 @@ public class State implements Comparable<State> {
 
     public void setTarget(Target target) {
         this.target = target;
+    }
+
+    public int getF() {
+        return f;
+    }
+
+    public void setF(int f) {
+        this.f = f;
     }
 
 }

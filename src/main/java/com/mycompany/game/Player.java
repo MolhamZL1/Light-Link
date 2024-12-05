@@ -74,7 +74,7 @@ public class Player {
                     askingplayingMethod();
                 }
 case 8 -> {
-                    state.findWinningState_AStar().printState();
+                    state.findWinningStateAStar().printState();
                     askingplayingMethod();
                 }
                 
